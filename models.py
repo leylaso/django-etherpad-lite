@@ -23,7 +23,6 @@ class PadAuthor(models.Model):
   authorID = models.CharField(max_length=256)
   server = models.ForeignKey(PadServer, verbose_name='Serveur')
   group = models.ManyToManyField(PadGroup, blank=True, null=True, verbose_name='Group')
-  sessionID = models.CharField(max_length=256, blank=True)
   def __unicode__(self):
     return self.authorID
 
@@ -34,4 +33,9 @@ class Pad(models.Model):
   def __unicode__(self):
     return self.name
 
-
+class PadSession(models.Model):
+  group = models.ForeignKey(PadGroup, verbose_name='Group')
+  author = models.ForeignKey(PadAuthor, verbose_name='Auteur')
+  sessionID = models.CharField(max_length=256, blank=True)
+  def __unicode__(self):
+    return self.sessionID
