@@ -7,5 +7,6 @@ urlpatterns = patterns('',
   url(r'^$', 'django.contrib.auth.views.login', {'template_name': 'etherpad-lite/login.html'}),
   url(r'^etherpad$', 'django.contrib.auth.views.login', {'template_name': 'etherpad-lite/login.html'}),
   url(r'^logout$', 'django.contrib.auth.views.logout', {'template_name': 'etherpad-lite/logout.html'}),
-  url(r'^accounts/profile/$', 'django_etherpad_lite.views.profile')
+  url(r'^accounts/profile/$', 'django_etherpad_lite.views.profile'),
+  url(r'^pad/(?P<pk>\d+)/$', 'django_etherpad_lite.views.pad'),
 )

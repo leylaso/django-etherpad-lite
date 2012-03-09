@@ -8,6 +8,11 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import datetime
+import time
+from django_etherpad_lite import simplecurl
+from urlparse import urlparse
+
+DJANGO_ETHERPAD_LITE_SESSION_LENGTH = 45 * 24 * 60 * 60
 
 def profile(request):
   name = request.user.__unicode__()
@@ -16,3 +21,21 @@ def profile(request):
   for g in author.group.all():
     groups[g.__unicode__()] = Pad.objects.filter(group=g)
   return render_to_response('etherpad-lite/profile.html', {'name': name, 'author': author, 'groups':groups});
+
+def pad(request, pk):
+  pad = get_object_or_404(Pad, pk=pk)
+  padLink = pad.server.url + 'p/' + pad.group.groupID + '$' + pad.name
+  server = urlparse(pad.server.url)
+
+  author = PadAuthor.objects.get(user=request.user)
+  author.EtherMap()
+  pad.group.EtherMap()
+  expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=DJANGO_ETHERPAD_LITE_SESSION_LENGTH)
+  expireStr = datetime.datetime.strftime(expires, "%a, %d-%b-%Y %H:%M:%S GMT")
+  sessReq = pad.server.url + 'api/1/createSession?apikey=' + pad.server.apikey + '&groupID=' + pad.group.groupID + '&authorID=' + author.authorID + '&validUntil=' + time.mktime(expires.timetuple()).__str__()
+  sessResp = simplecurl.json(sessReq)
+
+  response = render_to_response('etherpad-lite/pad.html', {'pad': pad, 'link': padLink, 'server':server, 'foo': sessReq});
+  response.set_cookie('sessionID', sessResp['data']['sessionID'], max_age=DJANGO_ETHERPAD_LITE_SESSION_LENGTH, expires=expireStr, domain=server.hostname)
+
+  return response

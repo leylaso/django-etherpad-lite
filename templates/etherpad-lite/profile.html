@@ -13,7 +13,7 @@ This is your profile.
   <h2>Pads in group {{group}}:</h2>
   <ul>
     {%for pad in pads%}
-      <li>{{pad.name}}</li>
+      <li><a href="/pad/{{pad.id}}">{{pad.name}}</a></li>
     {%endfor%}
   </ul>
 {% endfor %}
