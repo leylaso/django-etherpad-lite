@@ -33,6 +33,12 @@ class PadGroup(models.Model):
   server = models.ForeignKey(PadServer, verbose_name='Serveur')
   def __unicode__(self):
     return self.group.__unicode__()
+  def EtherMap(self):
+    req = self.server.url + 'api/1/createGroupIfNotExistsFor?apikey=' + self.server.apikey + '&groupMapper=' + self.group.id.__str__()
+    result = CurlPad(req)
+    self.groupID = result['data']['groupID']
+    self.save()
+    return result
 
 class PadAuthor(models.Model):
   user = models.ForeignKey(User, verbose_name='User')
@@ -46,6 +52,8 @@ class PadAuthor(models.Model):
     result = CurlPad(req)
     self.authorID = result['data']['authorID']
     self.save()
+    for g in self.group.all():
+      g.EtherMap()
     return result
 
 class Pad(models.Model):
