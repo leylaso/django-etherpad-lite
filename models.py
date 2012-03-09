@@ -16,7 +16,7 @@ class PadGroup(models.Model):
   groupID = models.CharField(max_length=256, blank=True)
   server = models.ForeignKey(PadServer, verbose_name='Serveur')
   def __unicode__(self):
-    return self.groupID
+    return self.group.__unicode__()
 
 class PadAuthor(models.Model):
   user = models.ForeignKey(User, verbose_name='User')
@@ -24,7 +24,7 @@ class PadAuthor(models.Model):
   server = models.ForeignKey(PadServer, verbose_name='Serveur')
   group = models.ManyToManyField(PadGroup, blank=True, null=True, verbose_name='Group')
   def __unicode__(self):
-    return self.authorID
+    return self.user.__unicode__()
 
 class Pad(models.Model):
   name = models.CharField(max_length=256)
@@ -38,4 +38,4 @@ class PadSession(models.Model):
   author = models.ForeignKey(PadAuthor, verbose_name='Auteur')
   sessionID = models.CharField(max_length=256, blank=True)
   def __unicode__(self):
-    return self.sessionID
+    return self.author + '@' + self.group
