@@ -5,7 +5,7 @@ from django.contrib.auth.models import User, Group
 
 class PadServer(models.Model):
   title = models.CharField(max_length=256)
-  url = models.URLField(max_length=256)
+  url = models.URLField(max_length=256, verify_exists=False)
   apikey = models.CharField(max_length=256) 
   notes = models.TextField('Description', blank=True)
   def __unicode__(self):
@@ -13,14 +13,14 @@ class PadServer(models.Model):
 
 class PadGroup(models.Model):
   group = models.ForeignKey(Group, verbose_name='Group')
-  groupID = models.CharField(max_length=256)
+  groupID = models.CharField(max_length=256, blank=True)
   server = models.ForeignKey(PadServer, verbose_name='Serveur')
   def __unicode__(self):
     return self.groupID
 
 class PadAuthor(models.Model):
   user = models.ForeignKey(User, verbose_name='User')
-  authorID = models.CharField(max_length=256)
+  authorID = models.CharField(max_length=256, blank=True)
   server = models.ForeignKey(PadServer, verbose_name='Serveur')
   group = models.ManyToManyField(PadGroup, blank=True, null=True, verbose_name='Group')
   def __unicode__(self):
