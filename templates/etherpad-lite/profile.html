@@ -1,0 +1,21 @@
+{% extends "etherpad-lite/base.html" %}
+{% load url from future %}
+
+{% block content %}
+
+<h1>{{name}}</h1>
+
+This is your profile.
+
+<a href="/logout">Logout</a>
+
+{% for group, pads in groups.items %}
+  <h2>Pads in group {{group}}:</h2>
+  <ul>
+    {%for pad in pads%}
+      <li>{{pad.name}}</li>
+    {%endfor%}
+  </ul>
+{% endfor %}
+
+{% endblock %}
