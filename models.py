@@ -1,21 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
-import pycurl
-import StringIO
-import simplejson
-
-# Reusable function for curl requests
-def CurlPad(req):
-  curlReq = pycurl.Curl()
-  curlReq.setopt(pycurl.URL, req.__str__())
-  curlReq.setopt(pycurl.FOLLOWLOCATION, 1)
-  curlReq.setopt(pycurl.MAXREDIRS, 5)
-  result = StringIO.StringIO()
-  curlReq.setopt(pycurl.WRITEFUNCTION, result.write)
-  curlReq.perform()
-  result = StringIO.StringIO(result.getvalue())
-  result = simplejson.load(result)
-  return result
+from django_etherpad_lite import simplecurl
 
 # Create your models here.
 
@@ -35,7 +20,7 @@ class PadGroup(models.Model):
     return self.group.__unicode__()
   def EtherMap(self):
     req = self.server.url + 'api/1/createGroupIfNotExistsFor?apikey=' + self.server.apikey + '&groupMapper=' + self.group.id.__str__()
-    result = CurlPad(req)
+    result = simplecurl.json(req)
     self.groupID = result['data']['groupID']
     self.save()
     return result
@@ -49,7 +34,7 @@ class PadAuthor(models.Model):
     return self.user.__unicode__()
   def EtherMap(self):
     req = self.server.url + 'api/1/createAuthorIfNotExistsFor?apikey=' + self.server.apikey + '&name=' + self.__unicode__() + '&authorMapper=' + self.user.id.__str__()
-    result = CurlPad(req)
+    result = simplecurl.json(req)
     self.authorID = result['data']['authorID']
     self.save()
     for g in self.group.all():
@@ -64,7 +49,7 @@ class Pad(models.Model):
     return self.name
   def Create(self):
     req = self.server.url + 'api/1/createGroupPad?apikey=' + self.server.apikey + '&groupID=' + self.group.groupID + '&padName=' + self.name
-    result = CurlPad(req)
+    result = simplecurl.json(req)
     return result
 
 class PadSession(models.Model):
