@@ -62,6 +62,10 @@ class Pad(models.Model):
   group = models.ForeignKey(PadGroup, verbose_name='Group')
   def __unicode__(self):
     return self.name
+  def Create(self):
+    req = self.server.url + 'api/1/createGroupPad?apikey=' + self.server.apikey + '&groupID=' + self.group.groupID + '&padName=' + self.name
+    result = CurlPad(req)
+    return result
 
 class PadSession(models.Model):
   group = models.ForeignKey(PadGroup, verbose_name='Group')
