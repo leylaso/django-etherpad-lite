@@ -1,0 +1,4 @@
+# Ignore any compiled files
+*.pyc
+# Don't track swp files created by vim
+*.swp
