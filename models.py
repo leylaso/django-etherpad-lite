@@ -1,5 +1,21 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
+import pycurl
+import StringIO
+import simplejson
+
+# Reusable function for curl requests
+def CurlPad(req):
+  curlReq = pycurl.Curl()
+  curlReq.setopt(pycurl.URL, req.__str__())
+  curlReq.setopt(pycurl.FOLLOWLOCATION, 1)
+  curlReq.setopt(pycurl.MAXREDIRS, 5)
+  result = StringIO.StringIO()
+  curlReq.setopt(pycurl.WRITEFUNCTION, result.write)
+  curlReq.perform()
+  result = StringIO.StringIO(result.getvalue())
+  result = simplejson.load(result)
+  return result
 
 # Create your models here.
 
@@ -25,6 +41,12 @@ class PadAuthor(models.Model):
   group = models.ManyToManyField(PadGroup, blank=True, null=True, verbose_name='Group')
   def __unicode__(self):
     return self.user.__unicode__()
+  def EtherMap(self):
+    req = self.server.url + 'api/1/createAuthorIfNotExistsFor?apikey=' + self.server.apikey + '&name=' + self.__unicode__() + '&authorMapper=' + self.user.id.__str__()
+    result = CurlPad(req)
+    self.authorID = result['data']['authorID']
+    self.save()
+    return result
 
 class Pad(models.Model):
   name = models.CharField(max_length=256)
