@@ -14,7 +14,9 @@ For now installation is all manual.
 
 First you will need to [install etherpad-lite](http://github.com/Pita/etherpad-lite/blob/master/README.md), or have the server url and apikey of an existing etherpad-lite instance.
 
-Lets assume if you are looking at this you already know how to install Django and start new Django projects. You will need to clone this repo into your Django project, and add `django_etherpad_lite` to the `INSTALLED_APPS` in your `settings.py`
+Lets assume if you are looking at this you already know how to [install Django](https://docs.djangoproject.com/en/1.3/intro/install/) and [start new Django projects](https://docs.djangoproject.com/en/1.3/intro/tutorial01/). 
+
+You will need to clone this repo into your Django project, and add `django_etherpad_lite` to the `INSTALLED_APPS` in your `settings.py`.
 
 Finally you will need to add lines to your `urls.py` file. You can either add this line:
 
