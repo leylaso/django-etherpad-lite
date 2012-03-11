@@ -1,7 +1,7 @@
 Etherpad Lite for Django
 ========================
 
-__This app is still under active development - some assembly is required.__
+__This app is in a pre-alpha state - some assembly is required.__
 
 This Django app provides a basic integration with etherpad lite. It presently allows django users created by the django.contrib.auth app to be mapped to etherpad users and groups, the creation of pads and secure sessions.
 
