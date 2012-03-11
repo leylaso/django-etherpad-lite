@@ -36,6 +36,11 @@ Once you have done this, you will need to, at minimum, create a group and add a 
 
 At this point, any users you add to the django project who are members of an etherpad enabled group will be able to take full advantage of the modules features.
 
+A note on multi-server support
+------------------------------
+
+I intend to support multiple etherpad-lite servicets with this App. At present this functionality is untested. Use it at your own risk.
+
 Licensing
 ---------
 
