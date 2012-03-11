@@ -28,6 +28,14 @@ Or, if you are already serving your home page via a different app, these lines:
      url(r'^accounts/profile/$', include('django_etherpad_lite.urls')),
      url(r'^logout$', include('django_etherpad_lite.urls')),
 
+Once you have done this, you will need to, at minimum, create a group and add a first etherpad-lite server via the django admin interface in order to take full advantage of this modules functionality:
+
+1. Add a group: `admin/auth/group/add/`
+2. Add an etherpad server: `admin/django_etherpad_lite/padserver/add/`
+3. Add an etherpad group corresponding to the auth group: `admin/django_etherpad_lite/padgroup/add/`
+
+At this point, any users you add to the django project who are members of an etherpad enabled group will be able to take full advantage of the modules features.
+
 Licensing
 ---------
 
