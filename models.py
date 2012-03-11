@@ -40,6 +40,15 @@ class PadAuthor(models.Model):
     for g in self.group.all():
       g.EtherMap()
     return result
+  def GroupSynch(self):
+    for ag in self.user.groups.all():
+      try:
+        gr = PadGroup.objects.get(group=ag)
+      except PadGroup.DoesNotExist:
+        gr = False
+      if (isinstance(gr, PadGroup)):
+        self.group.add(gr)
+    self.save()
 
 class Pad(models.Model):
   name = models.CharField(max_length=256)

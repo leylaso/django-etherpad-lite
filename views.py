@@ -16,7 +16,16 @@ DJANGO_ETHERPAD_LITE_SESSION_LENGTH = 45 * 24 * 60 * 60
 
 def profile(request):
   name = request.user.__unicode__()
-  author = PadAuthor.objects.get(user=request.user)
+  
+  # Retrieve the corresponding padauthor object - if none exists, create one
+  try:
+    author = PadAuthor.objects.get(user=request.user)
+  except PadAuthor.DoesNotExist:
+    author = PadAuthor(user=request.user, server=PadServer.objects.get(id=1))
+    author.save()
+    author.GroupSynch()
+    author.EtherMap()
+
   groups = {}
   for g in author.group.all():
     groups[g.__unicode__()] = Pad.objects.filter(group=g)
@@ -28,8 +37,6 @@ def pad(request, pk):
   server = urlparse(pad.server.url)
 
   author = PadAuthor.objects.get(user=request.user)
-  author.EtherMap()
-  pad.group.EtherMap()
   expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=DJANGO_ETHERPAD_LITE_SESSION_LENGTH)
   expireStr = datetime.datetime.strftime(expires, "%a, %d-%b-%Y %H:%M:%S GMT")
   sessReq = pad.server.url + 'api/1/createSession?apikey=' + pad.server.apikey + '&groupID=' + pad.group.groupID + '&authorID=' + author.authorID + '&validUntil=' + time.mktime(expires.timetuple()).__str__()
