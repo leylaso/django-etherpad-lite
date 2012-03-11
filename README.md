@@ -24,10 +24,9 @@ Finally you will need to add lines to your `urls.py` file. You can either add th
 
 Or, if you are already serving your home page via a different app, these lines:
 
-     url(r'^etherpad$', include('django_etherpad_lite.urls')),
+     url(r'^etherpad', include('django_etherpad_lite.urls')),
      url(r'^accounts/profile/$', include('django_etherpad_lite.urls')),
      url(r'^logout$', include('django_etherpad_lite.urls')),
-     url(r'^pad/(?P<pk>\d+)/$', include('django_etherpad_lite.urls')),
 
 Licensing
 ---------
