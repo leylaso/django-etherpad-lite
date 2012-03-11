@@ -11,8 +11,15 @@ class PadAuthorAdmin(admin.ModelAdmin):
        a.EtherMap()
    EtherMap.short_description = "Map selected authors to their etherpad servers"
 
+class PadAdmin(admin.ModelAdmin):
+   list_display = ('__unicode__',)
+   actions = ['Create']
+   def Create(modeladmin, request, queryset):
+     for a in queryset.all():
+       a.Create()
+   Create.short_description = "Create these pads on their respective servers"
 
 admin.site.register(PadServer)
 admin.site.register(PadGroup)
 admin.site.register(PadAuthor, PadAuthorAdmin)
-admin.site.register(Pad)
+admin.site.register(Pad, PadAdmin)
