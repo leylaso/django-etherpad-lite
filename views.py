@@ -42,7 +42,7 @@ def pad(request, pk):
   sessReq = pad.server.url + 'api/1/createSession?apikey=' + pad.server.apikey + '&groupID=' + pad.group.groupID + '&authorID=' + author.authorID + '&validUntil=' + time.mktime(expires.timetuple()).__str__()
   sessResp = simplecurl.json(sessReq)
 
-  response = render_to_response('etherpad-lite/pad.html', {'pad': pad, 'link': padLink, 'server':server, 'foo': sessReq});
+  response = render_to_response('etherpad-lite/pad.html', {'pad': pad, 'link': padLink, 'server':server, 'uname': author.user.__unicode__()});
   response.set_cookie('sessionID', sessResp['data']['sessionID'], max_age=DJANGO_ETHERPAD_LITE_SESSION_LENGTH, expires=expireStr, domain=server.hostname)
 
   return response
