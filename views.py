@@ -45,8 +45,7 @@ def profile(request):
     author = PadAuthor.objects.get(user=request.user)
   except PadAuthor.DoesNotExist:
     author = PadAuthor(user=request.user, server=PadServer.objects.get(id=1))
-    author.save()
-
+  author.save()
   groups = {}
   for g in author.group.all():
     groups[g.__unicode__()] = {'group': g, 'pads': Pad.objects.filter(group=g)}

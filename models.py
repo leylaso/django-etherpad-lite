@@ -23,8 +23,21 @@ class PadGroup(models.Model):
     req = self.server.url + 'api/1/createGroupIfNotExistsFor?apikey=' + self.server.apikey + '&groupMapper=' + self.group.id.__str__()
     result = simplecurl.json(req)
     self.groupID = result['data']['groupID']
-    self.save()
     return result
+  def save(self, *args, **kwargs):
+    self.EtherMap()
+    super(PadGroup, self).save(*args, **kwargs)
+  def Destroy(self):
+    # First find and delete all associated pads
+    Pad.objects.filter(group=self).delete()
+    req = self.server.url + 'api/1/deleteGroup?apikey=' + self.server.apikey + '&groupID=' + self.groupID
+    result = simplecurl.json(req)
+    return result
+# Make sure groups are purged from etherpad when deleted
+def padGroupDel(sender, **kwargs):
+  grp = kwargs['instance']
+  grp.Destroy()
+pre_delete.connect(padGroupDel, sender=PadGroup)
 
 class PadAuthor(models.Model):
   user = models.ForeignKey(User, verbose_name='User')
@@ -78,4 +91,3 @@ def padDel(sender, **kwargs):
   pad = kwargs['instance']
   pad.Destroy()
 pre_delete.connect(padDel, sender=Pad)
-
