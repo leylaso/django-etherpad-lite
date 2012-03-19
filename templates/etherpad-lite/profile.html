@@ -13,9 +13,9 @@ This is your profile.
   <h2>Pads in group {{group}}:</h2>
   <ul>
     {%for pad in data.pads%}
-    <li><a href="/etherpad/{{pad.id}}">{{pad.name}}</a></li>
+    <li><a href="/etherpad/{{pad.id}}">{{pad.name}}</a><a class="action" href="/etherpad/delete/{{pad.id}}">Del</a></li>
     {%endfor%}
-    <li><a class="action" href="/etherpad/create/{{data.group.id}}">Create</a></li>
+    <li><a class="action" href="/etherpad/create/{{data.group.id}}">Add</a></li>
   </ul>
 {% endfor %}
 

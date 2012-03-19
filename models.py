@@ -60,7 +60,7 @@ class Pad(models.Model):
     req = self.server.url + 'api/1/createGroupPad?apikey=' + self.server.apikey + '&groupID=' + self.group.groupID + '&padName=' + self.name
     result = simplecurl.json(req)
     return result
-  def Delete(self):
+  def Destroy(self):
     req = self.server.url + 'api/1/deletePad?apikey=' + self.server.apikey + '&padID=' + self.group.groupID + '$' + self.name
     result = simplecurl.json(req)
     return result
