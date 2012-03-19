@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='django_etherpad_lite',
-    version='0.1dev',
+    version='0.1',
     author='Sofian Benaissa',
     url='https://github.com/sfyn/django_etherpad_lite',
     description='Etherpad-lite integration for Django',
