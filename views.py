@@ -8,7 +8,7 @@ from django.http import HttpResponseRedirect
 from django.core.context_processors import csrf
 from django.contrib.auth.decorators import login_required
 
-DJANGO_ETHERPAD_LITE_SESSION_LENGTH = 45 * 24 * 60 * 60
+DJANGO_ETHERPAD_LITE_SESSION_LENGTH = 1 * 24 * 60 * 60
 
 @login_required(login_url='/etherpad')
 def padCreate(request, pk):
