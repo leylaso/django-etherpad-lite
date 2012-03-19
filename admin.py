@@ -5,11 +5,6 @@ from django.contrib import admin
 
 class PadAuthorAdmin(admin.ModelAdmin):
    list_display = ('__unicode__',)
-   actions = ['EtherMap']
-   def EtherMap(modeladmin, request, queryset):
-     for a in queryset.all():
-       a.EtherMap()
-   EtherMap.short_description = "Map selected authors to their etherpad servers"
 
 class PadAdmin(admin.ModelAdmin):
    list_display = ('__unicode__',)

@@ -36,9 +36,6 @@ class PadAuthor(models.Model):
     req = self.server.url + 'api/1/createAuthorIfNotExistsFor?apikey=' + self.server.apikey + '&name=' + self.__unicode__() + '&authorMapper=' + self.user.id.__str__()
     result = simplecurl.json(req)
     self.authorID = result['data']['authorID']
-    self.save()
-    for g in self.group.all():
-      g.EtherMap()
     return result
   def GroupSynch(self):
     for ag in self.user.groups.all():
@@ -48,7 +45,11 @@ class PadAuthor(models.Model):
         gr = False
       if (isinstance(gr, PadGroup)):
         self.group.add(gr)
-    self.save()
+    super(PadAuthor, self).save(*args, **kwargs)
+  def save(self, *args, **kwargs):
+    self.EtherMap()
+    super(PadAuthor, self).save(*args, **kwargs)
+    self.GroupSynch() # Unfortunately, this will only work when save is called from code
 
 class Pad(models.Model):
   name = models.CharField(max_length=256)

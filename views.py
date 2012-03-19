@@ -48,8 +48,6 @@ def profile(request):
   except PadAuthor.DoesNotExist:
     author = PadAuthor(user=request.user, server=PadServer.objects.get(id=1))
     author.save()
-    author.GroupSynch()
-    author.EtherMap()
 
   groups = {}
   for g in author.group.all():
