@@ -1,16 +1,21 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//FR"
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+{% load i18n %}
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title>{% block title %}{% endblock %}</title>
-    <link href="/static/etherpad-lite/css/style.css" rel="stylesheet">
+  <title>{% block title %}{% endblock %}</title>
+  <link href="/static/etherpad-lite/css/style.css" rel="stylesheet">
 </head>
 
 <body>
-  <div id="nav"><span id="navlinks">
-    <a class="nav" href="/accounts/profile/">Profile</a>
-    <a class="nav" href="/logout">Logout</a>
-  </span></div>
+  <div id="nav">
+    {% block nav %}
+    <span id="navlinks">
+      <a class="nav" href="/accounts/profile/">{% trans "profile" %}</a>
+      <a class="nav" href="/logout">{% trans "logout" %}</a>
+    </span>
+    {% endblock %}
+  </div>
   <div id="wrapper">
     {% block wrapper %}
     {% endblock %}

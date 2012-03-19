@@ -1,12 +1,13 @@
 {% extends "etherpad-lite/base.html" %}
 {% load url from future %}
+{% load i18n %}
 
 {% block content %}
 
 <form action="{{action}}" method="post">{% csrf_token %}
 <p>{{question}}</p>
-<input class="submit" type="submit" name="cancel" value="No" />
-<input class="submit" type="submit" name="confirm" value="Yes" />
+<input class="submit" type="submit" name="cancel" value="{% trans "No" %}" />
+<input class="submit" type="submit" name="confirm" value="{% trans "Yes" %}" />
 </form>
 
 {% endblock %}
