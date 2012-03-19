@@ -38,7 +38,7 @@ class PadAuthor(models.Model):
     result = simplecurl.json(req)
     self.authorID = result['data']['authorID']
     return result
-  def GroupSynch(self):
+  def GroupSynch(self, *args, **kwargs):
     for ag in self.user.groups.all():
       try:
         gr = PadGroup.objects.get(group=ag)
