@@ -39,7 +39,7 @@ At this point, any users you add to the django project who are members of an eth
 A note on multi-server support
 ------------------------------
 
-I intend to support multiple etherpad-lite servicets with this App. At present this functionality is untested. Use it at your own risk.
+I intend to support multiple etherpad-lite services with this App. At present this functionality is untested. Use it at your own risk.
 
 Licensing
 ---------
