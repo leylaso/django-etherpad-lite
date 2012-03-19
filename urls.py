@@ -9,4 +9,5 @@ urlpatterns = patterns('',
   url(r'^logout$', 'django.contrib.auth.views.logout', {'template_name': 'etherpad-lite/logout.html'}),
   url(r'^accounts/profile/$', 'django_etherpad_lite.views.profile'),
   url(r'^etherpad/(?P<pk>\d+)/$', 'django_etherpad_lite.views.pad'),
+  url(r'^etherpad/create/(?P<pk>\d+)/$', 'django_etherpad_lite.views.padCreate')
 )

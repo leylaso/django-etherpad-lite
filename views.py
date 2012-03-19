@@ -2,17 +2,34 @@
 
 from django.shortcuts import render_to_response, get_object_or_404
 from django_etherpad_lite.models import *
+from django_etherpad_lite import forms
 from django.db.models import Count
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.admin.views.decorators import staff_member_required
 from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.context_processors import csrf
 import datetime
 import time
 from django_etherpad_lite import simplecurl
 from urlparse import urlparse
 
 DJANGO_ETHERPAD_LITE_SESSION_LENGTH = 45 * 24 * 60 * 60
+
+def padCreate(request, pk):
+  group = get_object_or_404(PadGroup, pk=pk)
+  if request.method == 'POST':
+    form = forms.PadCreate(request.POST)
+    if form.is_valid():
+      pad = Pad(name=form.cleaned_data['name'], server=group.server, group=group)
+      pad.save()
+      pad.Create()
+      return HttpResponseRedirect('/accounts/profile/')
+  else:
+    form = forms.PadCreate({'group':group.groupID})
+  con = {'form': form, 'pk': pk}
+  con.update(csrf(request))
+  return render_to_response('etherpad-lite/padCreate.html', con)
 
 def profile(request):
   name = request.user.__unicode__()
@@ -28,7 +45,7 @@ def profile(request):
 
   groups = {}
   for g in author.group.all():
-    groups[g.__unicode__()] = Pad.objects.filter(group=g)
+    groups[g.__unicode__()] = {'group': g, 'pads': Pad.objects.filter(group=g)}
   return render_to_response('etherpad-lite/profile.html', {'name': name, 'author': author, 'groups':groups});
 
 def pad(request, pk):
