@@ -2,3 +2,5 @@
 *.pyc
 # Don't track swp files created by vim
 *.swp
+# Don't track .egg-info directories
+*.egg-info
