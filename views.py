@@ -6,9 +6,11 @@ from django_etherpad_lite import forms
 from django.db.models import Count
 from django.http import HttpResponseRedirect
 from django.core.context_processors import csrf
+from django.contrib.auth.decorators import login_required
 
 DJANGO_ETHERPAD_LITE_SESSION_LENGTH = 45 * 24 * 60 * 60
 
+@login_required(login_url='/etherpad')
 def padCreate(request, pk):
   group = get_object_or_404(PadGroup, pk=pk)
   if request.method == 'POST':
@@ -24,6 +26,7 @@ def padCreate(request, pk):
   con.update(csrf(request))
   return render_to_response('etherpad-lite/padCreate.html', con)
 
+@login_required(login_url='/etherpad')
 def padDelete(request, pk):
   pad = get_object_or_404(Pad, pk=pk)
   if request.method == 'POST':
@@ -35,6 +38,7 @@ def padDelete(request, pk):
   con.update(csrf(request))
   return render_to_response('etherpad-lite/confirm.html', con)
 
+@login_required(login_url='/etherpad')
 def profile(request):
   name = request.user.__unicode__()
   
@@ -52,6 +56,7 @@ def profile(request):
     groups[g.__unicode__()] = {'group': g, 'pads': Pad.objects.filter(group=g)}
   return render_to_response('etherpad-lite/profile.html', {'name': name, 'author': author, 'groups':groups});
 
+@login_required(login_url='/etherpad')
 def pad(request, pk):
   import datetime
   import time
