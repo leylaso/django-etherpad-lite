@@ -5,18 +5,17 @@
 
 <h1>{{name}}</h1>
 
-This is your profile.
-
-<a href="/logout">Logout</a>
-
-{% for group, data in groups.items %}
-  <h2>Pads in group {{group}}:</h2>
-  <ul>
-    {%for pad in data.pads%}
-    <li><a href="/etherpad/{{pad.id}}">{{pad.name}}</a><a class="action" href="/etherpad/delete/{{pad.id}}">Del</a></li>
-    {%endfor%}
-    <li><a class="action" href="/etherpad/create/{{data.group.id}}">Add</a></li>
-  </ul>
-{% endfor %}
+  <div class='inliner'><h2>PADS: </h2></div>
+  <div class='inliner'>
+  {% for group, data in groups.items %}
+    <h2>{{group}}</h2>
+    <ul>
+      {%for pad in data.pads%}
+      <li><a href="/etherpad/{{pad.id}}">{{pad.name}}</a><a class="action act-del" href="/etherpad/delete/{{pad.id}}">Del</a></li>
+      {%endfor%}
+      <li><a class="action act-add" href="/etherpad/create/{{data.group.id}}">Add</a></li>
+    </ul>
+  {% endfor %}
+  </div>
 
 {% endblock %}

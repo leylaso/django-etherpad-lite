@@ -3,11 +3,19 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <title>{% block title %}{% endblock %}</title>
+    <link href="/static/etherpad-lite/css/style.css" rel="stylesheet">
 </head>
 
 <body>
+  <div id="nav"><span id="navlinks">
+    <a class="nav" href="/accounts/profile/">Profile</a>
+    <a class="nav" href="/logout">Logout</a>
+  </span></div>
+  <div id="wrapper">
+    {% block wrapper %}
+    {% endblock %}
   <div id="main">
-    <div id="content">
+     <div id="content">
       {% if messages %}
         <div id="messages">
         {% block messages %}
@@ -26,7 +34,7 @@
     </div>
     <div id="footer">
     </div>
-  </div>
+  </div></div>
 
 </body>
 </html>

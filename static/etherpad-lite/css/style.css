@@ -1,0 +1,154 @@
+/*********
+ * Layout *
+ **********/
+
+/* Center nav and main areas */
+
+#nav,
+#main,
+#footer {
+  min-width: 768px;
+  width: 55%;
+  margin: 0 auto;
+}
+
+#content,
+#sidebar,
+div.inliner {
+  display: inline-block;
+  vertical-align: top;
+  padding: 0 .5em;
+}
+
+#content {
+  width: 70%;
+}
+
+#wrapper {
+  width: 100%;
+  clear: both;
+}
+
+/* Text alignment and padding rules */
+
+#nav {
+  text-align: right;
+}
+
+#nav #navlinks {
+  display: inline-block;
+}
+
+#nav a.nav {
+  margin: 0 .5em;
+  font-size: 16px;
+}
+
+#main {
+  padding: 0 1em;
+  text-align: justify;
+}
+
+input.submit {
+  font-size: 100%;
+  padding: .2em 1em;
+}
+
+a.action {
+  margin-left: 1em;
+}
+
+/**********************
+ * Fonts & text style *
+ **********************/
+
+body {
+  font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: normal;
+}
+
+#nav a.nav {
+  font-weight: bold;
+  text-decoration: none;
+}
+
+label {
+  font-weight: bold;
+}
+
+a.action {
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 80%;
+}
+
+/*********************
+ * Colours & Borders *
+ *********************/
+
+body {
+  background-color: #fff;
+}
+
+#wrapper {
+  border-top: 4px solid #000;
+}
+
+a {
+  color: #047;
+}
+
+a:hover {
+  color: #c00;
+}
+
+img {
+  border-style: none;
+}
+
+#errors {
+  color: #c00;
+  font-weight: bold;
+}
+
+input.submit {
+  background-color: #047;
+  color: #fff;
+}
+
+/***************
+ * Fancy Stuff *
+ ***************/
+
+#wrapper {
+  box-shadow: inset 0 30px 40px #eee;
+  -moz-box-shadow: inset 0 30px 40px #eee;
+  -webkit-box-shadow: inset 0 30px 40px #eee;
+  -o-box-shadow: inset 0 30px 40px #eee;
+}
+
+input.submit {
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -o-border-radius: 10px;
+}
+
+a.act-add {
+  background: transparent url('/static/etherpad-lite/img/add.png') no-repeat;
+}
+
+a.act-del {
+  background: transparent url('/static/etherpad-lite/img/del.png') no-repeat;
+}
+
+a.act-add, a.act-del {
+  height: 20px;
+  width: 20px;
+  color: transparent;
+  display: inline-block;
+  vertical-align: text-bottom;
+}

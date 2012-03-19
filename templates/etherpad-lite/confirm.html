@@ -5,8 +5,8 @@
 
 <form action="{{action}}" method="post">{% csrf_token %}
 <p>{{question}}</p>
-<input type="submit" name="cancel" value="No" />
-<input type="submit" name="confirm" value="Yes" />
+<input class="submit" type="submit" name="cancel" value="No" />
+<input class="submit" type="submit" name="confirm" value="Yes" />
 </form>
 
 {% endblock %}
