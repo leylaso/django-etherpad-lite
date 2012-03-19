@@ -4,15 +4,8 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django_etherpad_lite.models import *
 from django_etherpad_lite import forms
 from django.db.models import Count
-from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib.admin.views.decorators import staff_member_required
-from django.template import RequestContext
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import HttpResponseRedirect
 from django.core.context_processors import csrf
-import datetime
-import time
-from django_etherpad_lite import simplecurl
-from urlparse import urlparse
 
 DJANGO_ETHERPAD_LITE_SESSION_LENGTH = 45 * 24 * 60 * 60
 
@@ -60,6 +53,11 @@ def profile(request):
   return render_to_response('etherpad-lite/profile.html', {'name': name, 'author': author, 'groups':groups});
 
 def pad(request, pk):
+  import datetime
+  import time
+  from django_etherpad_lite import simplecurl
+  from urlparse import urlparse
+
   pad = get_object_or_404(Pad, pk=pk)
   padLink = pad.server.url + 'p/' + pad.group.groupID + '$' + pad.name
   server = urlparse(pad.server.url)
