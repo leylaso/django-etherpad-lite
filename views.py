@@ -18,7 +18,6 @@ def padCreate(request, pk):
     if form.is_valid():
       pad = Pad(name=form.cleaned_data['name'], server=group.server, group=group)
       pad.save()
-      pad.Create()
       return HttpResponseRedirect('/accounts/profile/')
   else:
     form = forms.PadCreate({'group':group.groupID})
@@ -31,7 +30,6 @@ def padDelete(request, pk):
   pad = get_object_or_404(Pad, pk=pk)
   if request.method == 'POST':
     if 'confirm' in request.POST:
-      pad.Destroy()
       pad.delete()
     return HttpResponseRedirect('/accounts/profile/')
   con = {'action': '/etherpad/delete/' + pk + '/', 'question':'Really delete this pad?'}

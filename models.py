@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
 from django_etherpad_lite import simplecurl
+from django.db.models.signals import pre_delete
 
 # Create your models here.
 
@@ -69,3 +70,12 @@ class Pad(models.Model):
     req = self.server.url + 'api/1/getReadOnlyID?apikey=' + self.server.apikey + '&padID=' + self.group.groupID + '$' + self.name
     result = simplecurl.json(req)
     return self.server.url + 'ro/' + result['data']['readOnlyID']
+  def save(self, *args, **kwargs):
+    self.Create()
+    super(Pad, self).save(*args, **kwargs)
+# make sure pads are deleted when their database entries are
+def padDel(sender, **kwargs):
+  pad = kwargs['instance']
+  pad.Destroy()
+pre_delete.connect(padDel, sender=Pad)
+
