@@ -90,7 +90,6 @@ class PadAuthor(models.Model):
   def save(self, *args, **kwargs):
     self.EtherMap()
     super(PadAuthor, self).save(*args, **kwargs)
-    self.GroupSynch() # Unfortunately, this will only work when save is called from code
 
 
 class Pad(models.Model):

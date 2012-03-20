@@ -55,12 +55,13 @@ def profile(request):
   """Display a user profile containing etherpad groups and associated pads
   """
   name = request.user.__unicode__()
-  
+
   try: # Retrieve the corresponding padauthor object
     author = PadAuthor.objects.get(user=request.user)
   except PadAuthor.DoesNotExist: # None exists, so create one
     author = PadAuthor(user=request.user, server=PadServer.objects.get(id=1))
-  author.save() # Always resave, to synchronize groups and get mappings from the etherpad server
+    author.save()
+  author.GroupSynch()
 
   groups = {}
   for g in author.group.all():
