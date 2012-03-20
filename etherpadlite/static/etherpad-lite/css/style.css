@@ -155,11 +155,11 @@ input.submit {
 }
 
 a.act-add {
-  background: transparent url('/static/etherpad-lite/img/add.png') no-repeat;
+  background: transparent url('../img/add.png') no-repeat;
 }
 
 a.act-del {
-  background: transparent url('/static/etherpad-lite/img/del.png') no-repeat;
+  background: transparent url('../img/del.png') no-repeat;
 }
 
 a.act-add, a.act-del {
