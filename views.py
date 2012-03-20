@@ -7,7 +7,7 @@ from django.db.models import Count
 from django.http import HttpResponseRedirect
 from django.core.context_processors import csrf
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext as tr
+from django.utils.translation import ugettext as _
 
 DJANGO_ETHERPAD_LITE_SESSION_LENGTH = 1 * 24 * 60 * 60
 
@@ -42,7 +42,7 @@ def padDelete(request, pk):
       pad.delete()
     return HttpResponseRedirect('/accounts/profile/')
 
-  con = {'action': '/etherpad/delete/' + pk + '/', 'question':tr('Really delete this pad?')}
+  con = {'action': '/etherpad/delete/' + pk + '/', 'question':_('Really delete this pad?')}
   con.update(csrf(request))
   return render_to_response('etherpad-lite/confirm.html', con)
 

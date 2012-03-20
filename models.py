@@ -2,19 +2,19 @@ from django.db import models
 from django.contrib.auth.models import User, Group
 from django_etherpad_lite import simplecurl
 from django.db.models.signals import pre_delete
-from django.utils.translation import ugettext as tr
+from django.utils.translation import ugettext as _
 
 
 class PadServer(models.Model):
   """Schema and methods for etherpad-lite servers
   """
   title = models.CharField(max_length=256)
-  url = models.URLField(max_length=256, verify_exists=False, verbose_name=tr('URL'))
-  apikey = models.CharField(max_length=256, verbose_name=tr('API key')) 
-  notes = models.TextField(tr('description'), blank=True)
+  url = models.URLField(max_length=256, verify_exists=False, verbose_name=_('URL'))
+  apikey = models.CharField(max_length=256, verbose_name=_('API key')) 
+  notes = models.TextField(_('description'), blank=True)
 
   class Meta:
-    verbose_name = tr('server')
+    verbose_name = _('server')
 
   def __unicode__(self):
     return self.url
@@ -28,7 +28,7 @@ class PadGroup(models.Model):
   server = models.ForeignKey(PadServer)
 
   class Meta:
-    verbose_name = tr('group')
+    verbose_name = _('group')
 
   def __unicode__(self):
     return self.group.__unicode__()
@@ -66,7 +66,7 @@ class PadAuthor(models.Model):
   group = models.ManyToManyField(PadGroup, blank=True, null=True)
 
   class Meta:
-    verbose_name = tr('author')
+    verbose_name = _('author')
 
   def __unicode__(self):
     return self.user.__unicode__()

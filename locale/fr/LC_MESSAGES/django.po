@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-19 20:27-0400\n"
+"POT-Creation-Date: 2012-03-19 20:40-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,34 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+#: models.py:12
+msgid "URL"
+msgstr "URL"
+
+#: models.py:13
+msgid "API key"
+msgstr "clé API"
+
+#: models.py:14
+msgid "description"
+msgstr "déscription"
+
+#: models.py:17
+msgid "server"
+msgstr "serveur"
+
+#: models.py:31
+msgid "group"
+msgstr "groupe"
+
+#: models.py:69
+msgid "author"
+msgstr "auteur"
+
+#: views.py:45
+msgid "Really delete this pad?"
+msgstr "Effacer vraiment ce pad?"
 
 #: templates/etherpad-lite/base.html:14
 msgid "profile"
@@ -44,7 +72,7 @@ msgstr "Connexion"
 
 #: templates/etherpad-lite/logout.html:7
 msgid "You have been logged out."
-msgstr "Vous êtes déconnectez."
+msgstr "Vous êtes déconnecté."
 
 #: templates/etherpad-lite/logout.html:7
 msgid "Log back in."
