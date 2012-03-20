@@ -88,22 +88,32 @@ def pad(request, pk):
   server = urlparse(pad.server.url)
   author = PadAuthor.objects.get(user=request.user)
 
-  # Determine an expiry date for the session
-  expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=config.SESSION_LENGTH)
-  expireStr = datetime.datetime.strftime(expires, "%a, %d-%b-%Y %H:%M:%S GMT")
+  # Set up the response
+  response = render_to_response('etherpad-lite/pad.html',
+                                {'pad': pad, 'link': padLink, 'server':server, 'uname': author.user.__unicode__()},
+                                context_instance=RequestContext(request))
+
+
+  if ('padSessionID' in request.COOKIES): # Delete the existing session first
+    delReq = pad.server.url + 'api/1/deleteSession?apikey=' + pad.server.apikey + '&sessionID=' + request.COOKIES['sessionID']
+    simplecurl.json(delReq)
+    response.delete_cookie('sessionID', server.hostname)
+    response.delete_cookie('padSessionID')
 
   # Create the session on the etherpad-lite side
+  expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=config.SESSION_LENGTH)
   sessReq = pad.server.url + 'api/1/createSession?apikey=' + pad.server.apikey + '&groupID=' + pad.group.groupID + '&authorID=' + author.authorID + '&validUntil=' + time.mktime(expires.timetuple()).__str__()
   sessResp = simplecurl.json(sessReq)
 
-  # Craft a response and add the necessary values from etherpad-lite to the cookie
-  response = render_to_response('etherpad-lite/pad.html', 
-                                {'pad': pad, 'link': padLink, 'server':server, 'uname': author.user.__unicode__()},
-                                context_instance=RequestContext(request));
-  response.set_cookie('sessionID', 
-                      sessResp['data']['sessionID'], 
-                      max_age=config.SESSION_LENGTH, 
-                      expires=expireStr, 
-                      domain=server.hostname)
+  # Set the new session cookie for both the server and the local site
+  response.set_cookie('sessionID',
+                      value=sessResp['data']['sessionID'],
+                      expires=expires,
+                      domain=server.hostname,
+                      httponly=False)
+  response.set_cookie('padSessionID',
+                      value=sessResp['data']['sessionID'],
+                      expires=expires,
+                      httponly=False)
 
   return response
