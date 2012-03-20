@@ -7,4 +7,20 @@
 
 <iframe src="{{link}}?userName={{uname}}" style="height: 95%; width: 100%; min-height: 500px; display: block"></iframe>
 
+<script type="text/javascript">
+/**
+ * This little script is necessary for some browsers that don't respect the
+ * height css attribute on iframes.
+ */
+function resizeEtherpad() {
+  height = jQuery(window).height()*94/100;
+  jQuery('#wrapper iframe').height(height);
+}
+
+jQuery(document).ready( function() {
+  resizeEtherpad()
+  jQuery(window).resize(resizeEtherpad);
+});
+</script>
+
 {% endblock %}
