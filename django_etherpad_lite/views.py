@@ -24,7 +24,7 @@ def padCreate(request, pk):
   else: # No form to process so create a fresh one
     form = forms.PadCreate({'group':group.groupID})
 
-  con = {'form': form, 'pk': pk}
+  con = {'form': form, 'pk': pk, 'title': _('Create pad in %(grp)s') % {'grp':group.__unicode__()}}
   con.update(csrf(request))
   return render_to_response('etherpad-lite/padCreate.html', con)
 
@@ -40,7 +40,7 @@ def padDelete(request, pk):
       pad.delete()
     return HttpResponseRedirect('/accounts/profile/')
 
-  con = {'action': '/etherpad/delete/' + pk + '/', 'question':_('Really delete this pad?')}
+  con = {'action': '/etherpad/delete/' + pk + '/', 'question':_('Really delete this pad?'), 'title': _('Deleting %(pad)s') % {'pad':pad.__unicode__()}}
   con.update(csrf(request))
   return render_to_response('etherpad-lite/confirm.html', con)
 

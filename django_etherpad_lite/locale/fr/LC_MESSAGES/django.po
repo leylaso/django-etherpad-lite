@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-19 20:52-0400\n"
+"POT-Creation-Date: 2012-03-20 00:02-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,9 +46,19 @@ msgstr "groupe"
 msgid "author"
 msgstr "auteur"
 
-#: views.py:45
+#: views.py:27
+#, python-format
+msgid "Create pad in %(grp)s"
+msgstr "Créer un pad dans %(grp)s"
+
+#: views.py:43
 msgid "Really delete this pad?"
 msgstr "Effacer vraiment ce pad?"
+
+#: views.py:43
+#, python-format
+msgid "Deleting %(pad)s"
+msgstr "Effacer %(pad)s"
 
 #: templates/etherpad-lite/base.html:14
 msgid "profile"
@@ -58,42 +68,48 @@ msgstr "profile"
 msgid "logout"
 msgstr "déconnecter"
 
-#: templates/etherpad-lite/confirm.html:9
+#: templates/etherpad-lite/confirm.html:13
 msgid "No"
 msgstr "Non"
 
-#: templates/etherpad-lite/confirm.html:10
+#: templates/etherpad-lite/confirm.html:14
 msgid "Yes"
 msgstr "Oui"
 
-#: templates/etherpad-lite/login.html:8
-msgid "Your username and password didn't match. Please try again."
-msgstr "Votre pseudo ou votre mot de passe sont incorrecte. Veuillez ressayer."
-
-#: templates/etherpad-lite/login.html:24
+#: templates/etherpad-lite/login.html:5 templates/etherpad-lite/login.html:8
+#: templates/etherpad-lite/login.html:26
 msgid "Login"
 msgstr "Connexion"
 
-#: templates/etherpad-lite/logout.html:7
+#: templates/etherpad-lite/login.html:10
+msgid "Your username and password didn't match. Please try again."
+msgstr "Votre pseudo ou votre mot de passe sont incorrecte. Veuillez ressayer."
+
+#: templates/etherpad-lite/logout.html:5
+#, fuzzy
+msgid "Logout"
+msgstr "Déconnexion"
+
+#: templates/etherpad-lite/logout.html:8
 msgid "You have been logged out."
 msgstr "Vous êtes déconnecté."
 
-#: templates/etherpad-lite/logout.html:7
+#: templates/etherpad-lite/logout.html:8
 msgid "Log back in."
 msgstr "Reconnectez vous"
 
-#: templates/etherpad-lite/padCreate.html:9
+#: templates/etherpad-lite/padCreate.html:19
 msgid "Create"
 msgstr "Créer"
 
-#: templates/etherpad-lite/profile.html:9
+#: templates/etherpad-lite/profile.html:11
 msgid "PADS:"
 msgstr "PADS:"
 
-#: templates/etherpad-lite/profile.html:15
+#: templates/etherpad-lite/profile.html:17
 msgid "Del"
 msgstr "Supprimer"
 
-#: templates/etherpad-lite/profile.html:17
+#: templates/etherpad-lite/profile.html:19
 msgid "Add"
 msgstr "Ajouter"

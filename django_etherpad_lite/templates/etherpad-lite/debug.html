@@ -1,6 +1,8 @@
 {% extends "etherpad-lite/base.html" %}
 {% load url from future %}
 
+{% block title %}{{Dump}}{% endblock %}
+
 {% block sidebar %}
   <div style="display:none">
     <h2>To use this template, paste this code into your view:</h2>
@@ -20,7 +22,7 @@ return response
 
 {% block content %}
 
-<h1>{{name}}</h1>
+<h1>Dump</h1>
 
   <dl>
 {% for val, data in dump.items %}

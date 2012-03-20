@@ -2,12 +2,16 @@
 {% load url from future %}
 {% load i18n %}
 
+{% block title %}{{title}}{% endblock %}
+
 {% block content %}
 
+<h1>{{title}}</h1>
+
 <form action="{{action}}" method="post">{% csrf_token %}
-<p>{{question}}</p>
-<input class="submit" type="submit" name="cancel" value="{% trans "No" %}" />
-<input class="submit" type="submit" name="confirm" value="{% trans "Yes" %}" />
+  <p>{{question}}</p>
+  <input class="submit" type="submit" name="cancel" value="{% trans "No" %}" />
+  <input class="submit" type="submit" name="confirm" value="{% trans "Yes" %}" />
 </form>
 
 {% endblock %}

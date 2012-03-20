@@ -2,8 +2,9 @@
 {% load url from future %}
 {% load i18n %}
 
-{% block content %}
+{% block title %}{% trans "Logout" %}{% endblock %}
 
+{% block content %}
 <h1>{% trans "You have been logged out." %} <a href="/etherpad">{% trans "Log back in." %}</a></h1>
 
 {% endblock %}

@@ -1,6 +1,8 @@
 {% extends "etherpad-lite/base.html" %}
 {% load url from future %}
 
+{% block title %}{{pad.name}}{% endblock %}
+
 {% block wrapper %}
 
 <iframe src="{{link}}?userName={{uname}}" style="height: 100%; width: 100%; min-height: 500px; display: block"></iframe>

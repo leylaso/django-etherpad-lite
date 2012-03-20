@@ -2,8 +2,10 @@
 {% load url from future %}
 {% load i18n %}
 
+{% block title %}{% trans "Login" %}{% endblock %}
+
 {% block content %}
-<div class="form">
+  <h1>{% trans "Login" %}</h1>
   {% if form.errors %}
   <p class="error">{% trans "Your username and password didn't match. Please try again." %}</p>
   {% endif %}
@@ -24,5 +26,4 @@
     <input class="submit" type="submit" value="{% trans "Login" %}" />
     <input type="hidden" name="next" value="{{ next }}" />
   </form>
-</div>
 {% endblock %}
