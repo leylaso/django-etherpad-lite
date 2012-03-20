@@ -16,29 +16,30 @@
     {% endblock %}
   </nav></div>
   <div id="wrapper">
-    {% block wrapper %}
-    {% endblock %}
-  <div id="main">
-     <div id="content">
-      {% if messages %}
-        <div id="messages">
-        {% block messages %}
-        {% for message in messages %}
-        <div class="{{ message.class }}">
-          <span class="mark">!</span>{{ message.text }}<span class="mark">!</span>
-        </div>
-        {% endfor %}
-        {% endblock %}
-        </div>
-      {% endif %}
-      {% block content %}{% endblock %}
+  {% block wrapper %}
+    <div id="main">
+       <div id="content">
+        {% if messages %}
+          <div id="messages">
+          {% block messages %}
+          {% for message in messages %}
+          <div class="{{ message.class }}">
+            <span class="mark">!</span>{{ message.text }}<span class="mark">!</span>
+          </div>
+          {% endfor %}
+          {% endblock %}
+          </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+      </div>
+      <div id="sidebar"><aside>
+        {% block sidebar %}{% endblock %}
+      </aside></div>
+      <div id="footer"><footer>
+      </footer></div>
     </div>
-    <div id="sidebar"><aside>
-      {% block sidebar %}{% endblock %}
-    </aside></div>
-    <div id="footer"><footer>
-    </footer></div>
-  </div></div>
+  {% endblock %}
+  </div>
 
 </body>
 </html>
