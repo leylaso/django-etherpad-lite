@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
-from django_etherpad_lite import simplecurl
+from etherpadlite import simplecurl
 from django.db.models.signals import pre_delete
 from django.utils.translation import ugettext as _
 

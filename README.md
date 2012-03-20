@@ -16,25 +16,32 @@ First you will need to [install etherpad-lite](http://github.com/Pita/etherpad-l
 
 Lets assume if you are looking at this you already know how to [install Django](https://docs.djangoproject.com/en/1.3/intro/install/) and [start new Django projects](https://docs.djangoproject.com/en/1.3/intro/tutorial01/). 
 
-You will need to clone this repo into your Django project, and add `django_etherpad_lite` to the `INSTALLED_APPS` in your `settings.py`.
+You will need to clone this repo into your Django project, and add `etherpadlite` to the `INSTALLED_APPS` in your `settings.py`.
 
 Finally you will need to add lines to your `urls.py` file. You can either add this line:
 
-     url(r'^', include('django_etherpad_lite.urls')),
+     url(r'^', include('etherpadlite.urls')),
 
 Or, if you are already serving your home page via a different app, these lines:
 
-     url(r'^etherpad', include('django_etherpad_lite.urls')),
-     url(r'^accounts/profile/$', include('django_etherpad_lite.urls')),
-     url(r'^logout$', include('django_etherpad_lite.urls')),
+     url(r'^etherpad', include('etherpadlite.urls')),
+     url(r'^accounts/profile/$', include('etherpadlite.urls')),
+     url(r'^logout$', include('etherpadlite.urls')),
 
 Once you have done this, you will need to, at minimum, create a group and add a first etherpad-lite server via the django admin interface in order to take full advantage of this modules functionality:
 
 1. Add a group: `admin/auth/group/add/`
-2. Add an etherpad server: `admin/django_etherpad_lite/padserver/add/`
-3. Add an etherpad group corresponding to the auth group: `admin/django_etherpad_lite/padgroup/add/`
+2. Add an etherpad server: `admin/etherpadlite/padserver/add/`
+3. Add an etherpad group corresponding to the auth group: `admin/etherpadlite/padgroup/add/`
 
 At this point, any users you add to the django project who are members of an etherpad enabled group will be able to take full advantage of the modules features.
+
+Support
+-------
+
+Some documentation exists in the [github wiki](https://github.com/sfyn/django-etherpad-lite/wiki).
+
+Report issues to the [issue queue](https://github.com/sfyn/django-etherpad-lite/issues).
 
 A note on multi-server support
 ------------------------------

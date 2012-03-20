@@ -1,10 +1,11 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='django_etherpad_lite',
+    name='etherpadlite',
     version='0.1',
     author='Sofian Benaissa',
-    url='https://github.com/sfyn/django_etherpad_lite',
+    author_email='me@sfyn.net'
+    url='https://github.com/sfyn/django-etherpad-lite',
     description='Etherpad-lite integration for Django',
     packages=find_packages(),
     zip_safe=False,

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*- 
 
 from django.shortcuts import render_to_response, get_object_or_404
-from django_etherpad_lite.models import *
-from django_etherpad_lite import forms
+from etherpadlite.models import *
+from etherpadlite import forms
 from django.db.models import Count
 from django.http import HttpResponseRedirect
 from django.core.context_processors import csrf
@@ -70,8 +70,8 @@ def pad(request, pk):
   """
   import datetime
   import time
-  from django_etherpad_lite import simplecurl
-  from django_etherpad_lite import config
+  from etherpadlite import simplecurl
+  from etherpadlite import config
   from urlparse import urlparse
 
   # Initialize some needed values
