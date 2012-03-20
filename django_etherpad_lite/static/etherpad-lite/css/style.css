@@ -21,7 +21,11 @@ div.inliner {
 }
 
 #content {
-  width: 70%;
+  width: 65%;
+}
+
+#sidebar {
+  width: 30%;
 }
 
 #wrapper {
