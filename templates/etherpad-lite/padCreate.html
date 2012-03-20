@@ -4,9 +4,16 @@
 
 {% block content %}
 
-<form action="/etherpad/create/{{ pk }}/" method="post">{% csrf_token %}
-  {{ form.as_p }}
-  <input class="submit" type="submit" value="{%trans "Create" %}" />
-</form>
+<div class="form">
+  <form action="/etherpad/create/{{ pk }}/" method="post">{% csrf_token %}
+    <table>
+      <tr>
+        <td>{{ form.name.label_tag }} </td>
+        <td>{{ form.name }}</td>
+      </tr>
+    </table>
+    <input class="submit" type="submit" value="{%trans "Create" %}" />
+  </form>
+</div>
 
 {% endblock %}
