@@ -5,6 +5,7 @@ from etherpadlite.models import *
 from etherpadlite import forms
 from django.db.models import Count
 from django.http import HttpResponseRedirect
+from django.template import RequestContext
 from django.core.context_processors import csrf
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
@@ -26,7 +27,9 @@ def padCreate(request, pk):
 
   con = {'form': form, 'pk': pk, 'title': _('Create pad in %(grp)s') % {'grp':group.__unicode__()}}
   con.update(csrf(request))
-  return render_to_response('etherpad-lite/padCreate.html', con)
+  return render_to_response('etherpad-lite/padCreate.html', 
+                            con, 
+                            context_instance=RequestContext(request))
 
 
 @login_required(login_url='/etherpad')
@@ -42,7 +45,9 @@ def padDelete(request, pk):
 
   con = {'action': '/etherpad/delete/' + pk + '/', 'question':_('Really delete this pad?'), 'title': _('Deleting %(pad)s') % {'pad':pad.__unicode__()}}
   con.update(csrf(request))
-  return render_to_response('etherpad-lite/confirm.html', con)
+  return render_to_response('etherpad-lite/confirm.html', 
+                            con, 
+                            context_instance=RequestContext(request))
 
 
 @login_required(login_url='/etherpad')
@@ -61,7 +66,9 @@ def profile(request):
   for g in author.group.all():
     groups[g.__unicode__()] = {'group': g, 'pads': Pad.objects.filter(group=g)}
 
-  return render_to_response('etherpad-lite/profile.html', {'name': name, 'author': author, 'groups':groups});
+  return render_to_response('etherpad-lite/profile.html', 
+                            {'name': name, 'author': author, 'groups':groups},
+                            context_instance=RequestContext(request))
 
 
 @login_required(login_url='/etherpad')
@@ -89,7 +96,13 @@ def pad(request, pk):
   sessResp = simplecurl.json(sessReq)
 
   # Craft a response and add the necessary values from etherpad-lite to the cookie
-  response = render_to_response('etherpad-lite/pad.html', {'pad': pad, 'link': padLink, 'server':server, 'uname': author.user.__unicode__()});
-  response.set_cookie('sessionID', sessResp['data']['sessionID'], max_age=config.SESSION_LENGTH, expires=expireStr, domain=server.hostname)
+  response = render_to_response('etherpad-lite/pad.html', 
+                                {'pad': pad, 'link': padLink, 'server':server, 'uname': author.user.__unicode__()},
+                                context_instance=RequestContext(request));
+  response.set_cookie('sessionID', 
+                      sessResp['data']['sessionID'], 
+                      max_age=config.SESSION_LENGTH, 
+                      expires=expireStr, 
+                      domain=server.hostname)
 
   return response

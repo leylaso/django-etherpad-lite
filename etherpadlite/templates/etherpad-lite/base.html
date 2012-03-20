@@ -11,8 +11,10 @@
 <body>
   <div id="nav"><nav>
     {% block nav %}
+      {% if user.is_authenticated %}
       <a class="nav" href="/accounts/profile/">{% trans "profile" %}</a>
       <a class="nav" href="/logout">{% trans "logout" %}</a>
+      {% endif %}
     {% endblock %}
   </nav></div>
   <div id="wrapper">
