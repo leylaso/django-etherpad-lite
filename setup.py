@@ -10,8 +10,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'Django',
-        # Disabled for now, since it's not installable for me right now
-        #'pycurl',
+        'pycurl',
         'simplejson'
     ],
     license='GPL3',
