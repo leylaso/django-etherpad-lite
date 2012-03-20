@@ -2,3 +2,5 @@
 *.pyc
 # Don't track swp files created by vim
 *.swp
+# Ignore compiled translation files
+*.mo
