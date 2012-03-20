@@ -56,6 +56,14 @@ def padGroupDel(sender, **kwargs):
   grp.Destroy()
 pre_delete.connect(padGroupDel, sender=PadGroup)
 
+def groupDel(sender, **kwargs):
+  """Make sure our groups are destroyed properly when auth groups are deleted
+  """
+  grp = kwargs['instance']
+  padGrp = PadGroup.objects.get(group=grp)
+  padGrp.Destroy()
+pre_delete.connect(groupDel, sender=Group)
+
 
 class PadAuthor(models.Model):
   """Schema and methods for etherpad-lite authors
