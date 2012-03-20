@@ -9,8 +9,6 @@ from django.core.context_processors import csrf
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
 
-DJANGO_ETHERPAD_LITE_SESSION_LENGTH = 1 * 24 * 60 * 60
-
 @login_required(login_url='/etherpad')
 def padCreate(request, pk):
   """Create a named pad for the given group
@@ -73,6 +71,7 @@ def pad(request, pk):
   import datetime
   import time
   from django_etherpad_lite import simplecurl
+  from django_etherpad_lite import config
   from urlparse import urlparse
 
   # Initialize some needed values
@@ -82,7 +81,7 @@ def pad(request, pk):
   author = PadAuthor.objects.get(user=request.user)
 
   # Determine an expiry date for the session
-  expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=DJANGO_ETHERPAD_LITE_SESSION_LENGTH)
+  expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=config.SESSION_LENGTH)
   expireStr = datetime.datetime.strftime(expires, "%a, %d-%b-%Y %H:%M:%S GMT")
 
   # Create the session on the etherpad-lite side
@@ -91,6 +90,6 @@ def pad(request, pk):
 
   # Craft a response and add the necessary values from etherpad-lite to the cookie
   response = render_to_response('etherpad-lite/pad.html', {'pad': pad, 'link': padLink, 'server':server, 'uname': author.user.__unicode__()});
-  response.set_cookie('sessionID', sessResp['data']['sessionID'], max_age=DJANGO_ETHERPAD_LITE_SESSION_LENGTH, expires=expireStr, domain=server.hostname)
+  response.set_cookie('sessionID', sessResp['data']['sessionID'], max_age=config.SESSION_LENGTH, expires=expireStr, domain=server.hostname)
 
   return response
