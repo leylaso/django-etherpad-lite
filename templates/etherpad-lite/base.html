@@ -1,21 +1,20 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 {% load i18n %}
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <meta charset="UTF-8" />
   <title>{% block title %}{% endblock %}</title>
-  <link href="/static/etherpad-lite/css/style.css" rel="stylesheet">
+  <link href="/static/etherpad-lite/css/style.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
-  <div id="nav">
+  <div id="nav"><nav>
     {% block nav %}
-    <span id="navlinks">
       <a class="nav" href="/accounts/profile/">{% trans "profile" %}</a>
       <a class="nav" href="/logout">{% trans "logout" %}</a>
-    </span>
     {% endblock %}
-  </div>
+  </nav></div>
   <div id="wrapper">
     {% block wrapper %}
     {% endblock %}
@@ -34,11 +33,11 @@
       {% endif %}
       {% block content %}{% endblock %}
     </div>
-    <div id="sidebar">
+    <aside id="sidebar">
       {% block sidebar %}{% endblock %}
-    </div>
-    <div id="footer">
-    </div>
+    </aside>
+    <div id="footer"><footer>
+    </footer></div>
   </div></div>
 
 </body>
