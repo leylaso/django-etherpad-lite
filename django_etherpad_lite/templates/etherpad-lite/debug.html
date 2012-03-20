@@ -1,0 +1,31 @@
+{% extends "etherpad-lite/base.html" %}
+{% load url from future %}
+
+{% block sidebar %}
+  <div style="display:none">
+    <h2>To use this template, paste this code into your view:</h2>
+    <pre>
+dump = {
+  'sessReq': sessReq,
+  'sessResp': sessResp.__str__(),
+  'SESSION_LENGTH': config.SESSION_LENGTH.__str__(),
+  'expireStr': expireStr,
+  'server.hostname': server.hostname.__str__(),
+}
+response = render_to_response('etherpad-lite/debug.html', {'dump':dump});
+return response
+    </pre>
+  </div>
+{% endblock %}
+
+{% block content %}
+
+<h1>{{name}}</h1>
+
+  <dl>
+{% for val, data in dump.items %}
+    <dt>{{val}}</dt><dd>{{data}}</dd>
+{% endfor %}
+  </dl>
+
+{% endblock %}
