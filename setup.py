@@ -4,7 +4,7 @@ setup(
     name='etherpadlite',
     version='0.1',
     author='Sofian Benaissa',
-    author_email='me@sfyn.net'
+    author_email='me@sfyn.net',
     url='https://github.com/sfyn/django-etherpad-lite',
     description='Etherpad-lite integration for Django',
     packages=find_packages(),
