@@ -88,9 +88,30 @@ def pad(request, pk):
   server = urlparse(pad.server.url)
   author = PadAuthor.objects.get(user=request.user)
 
+  # Create the session on the etherpad-lite side
+  expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=config.SESSION_LENGTH)
+  sessReq = pad.server.url + 'api/1/createSession?apikey=' + pad.server.apikey + '&groupID=' + pad.group.groupID + '&authorID=' + author.authorID + '&validUntil=' + time.mktime(expires.timetuple()).__str__()
+  sessResp = simplecurl.json(sessReq)
+
+  # Verify the etherpad response and act accordingly
+  if sessResp['data'] is None or sessResp['code'] is not 0:
+    response = render_to_response('etherpad-lite/pad.html',
+                                   {'pad': pad, 
+                                    'link': padLink, 
+                                    'server':server, 
+                                    'uname': author.user.__unicode__(), 
+                                    'error':_('etherpad-lite session request returned:') + ' "' + sessResp['message'] + '"'},
+                                 context_instance=RequestContext(request))
+    return response
+    
+
   # Set up the response
   response = render_to_response('etherpad-lite/pad.html',
-                                {'pad': pad, 'link': padLink, 'server':server, 'uname': author.user.__unicode__()},
+                                {'pad': pad, 
+                                 'link': padLink, 
+                                 'server':server, 
+                                 'uname': author.user.__unicode__(), 
+                                 'error':False},
                                 context_instance=RequestContext(request))
 
 
@@ -99,11 +120,6 @@ def pad(request, pk):
     simplecurl.json(delReq)
     response.delete_cookie('sessionID', server.hostname)
     response.delete_cookie('padSessionID')
-
-  # Create the session on the etherpad-lite side
-  expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=config.SESSION_LENGTH)
-  sessReq = pad.server.url + 'api/1/createSession?apikey=' + pad.server.apikey + '&groupID=' + pad.group.groupID + '&authorID=' + author.authorID + '&validUntil=' + time.mktime(expires.timetuple()).__str__()
-  sessResp = simplecurl.json(sessReq)
 
   # Set the new session cookie for both the server and the local site
   response.set_cookie('sessionID',
