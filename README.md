@@ -36,6 +36,45 @@ Once you have done this, you will need to, at minimum, create a group and add a 
 
 At this point, any users you add to the django project who are members of an etherpad enabled group will be able to take full advantage of the modules features.
 
+Etherpad-lite settings generation
+---------------------------------
+
+__WARNING__: This feature requires dict-style `settings.DATABASES` setting in your project.
+
+`django-etherpad-lite` offers a management command which generates a `settings.json` for Etherpad-lite uses project's database configuration. It is then possible to generate a proper configuration using `python manage.py generate_etherpad_settings > /path/to/etherpad/configuration/settings.json` and then start Etherpad-lite using `-s` option: `node node/server.js -s settings.json`:
+
+    $ python manage.py generate_etherpad_settings
+    {
+        "minify": true,
+        "dbType": "postgres",
+        "ip": "0.0.0.0",
+        "maxAge": 21600000,
+        "port": 9001,
+        "loglevel": "INFO",
+        "abiword": null,
+        "defaultPadText": "",
+        "dbSettings": {
+            "host": "localhost",
+            "password": "database_password",
+            "user": "database_user",
+            "database": "database_name"
+        },
+        "editOnly": false,
+        "requireSession": false
+    }
+
+This configuration can be overriden by including a `ETHERPAD_CONFIGURATION` setting in your `settings.py`. Every option corresponds to an option in the Etherpad-lite default configuration. 
+
+    ETHERPAD_CONFIGURATION = {
+        'port': '8088'
+    }
+
+One exception is the database setting: while it's possible to override the `dbType` and `dbSettings` settings (e.g. if you prefer to use a real key-value store like Redis), for most use cases it's recommended to set the `databaseAlias` settings (which defaults to `default`) to let `django-etherpad-lite` extract and set database options from your project's settings:
+
+    ETHERPAD_CONFIGURATION = {
+        'databaseAlias': 'nondefault',
+    }
+
 Support
 -------
 
