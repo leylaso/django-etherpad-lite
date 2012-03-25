@@ -116,7 +116,7 @@ def pad(request, pk):
 
 
   if ('padSessionID' in request.COOKIES): # Delete the existing session first
-    delReq = pad.server.url + 'api/1/deleteSession?apikey=' + pad.server.apikey + '&sessionID=' + request.COOKIES['sessionID']
+    delReq = pad.server.url + 'api/1/deleteSession?apikey=' + pad.server.apikey + '&sessionID=' + request.COOKIES['padSessionID']
     simplecurl.json(delReq)
     response.delete_cookie('sessionID', server.hostname)
     response.delete_cookie('padSessionID')
