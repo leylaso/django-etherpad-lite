@@ -16,6 +16,7 @@ setup(
     ],
     license='GPL3',
     include_package_data=True,
+    zip_safe=False,
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Framework :: Django',
