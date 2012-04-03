@@ -1,0 +1,2 @@
+recursive-include etherpadlite/templates *
+recursive-include etherpadlite/static *
