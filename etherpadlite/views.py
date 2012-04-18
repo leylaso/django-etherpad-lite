@@ -9,6 +9,7 @@ from django.template import RequestContext
 from django.core.context_processors import csrf
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
+from py_etherpad import EtherpadLiteClient
 
 @login_required(login_url='/etherpad')
 def padCreate(request, pk):
@@ -78,7 +79,6 @@ def pad(request, pk):
   """
   import datetime
   import time
-  from etherpadlite import simplecurl
   from etherpadlite import config
   from urlparse import urlparse
 
@@ -93,17 +93,18 @@ def pad(request, pk):
 
   # Create the session on the etherpad-lite side
   expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=config.SESSION_LENGTH)
-  sessReq = pad.server.url + 'api/1/createSession?apikey=' + pad.server.apikey + '&groupID=' + pad.group.groupID + '&authorID=' + author.authorID + '&validUntil=' + time.mktime(expires.timetuple()).__str__()
-  sessResp = simplecurl.json(sessReq)
 
-  # Verify the etherpad response and act accordingly
-  if sessResp['data'] is None or sessResp['code'] is not 0:
+  epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
+
+  try:
+    result = epclient.createSession(pad.group.groupID, author.authorID, time.mktime(expires.timetuple()).__str__())
+  except Exception, e:
     response = render_to_response('etherpad-lite/pad.html',
                                    {'pad': pad, 
                                     'link': padLink, 
                                     'server':server, 
                                     'uname': author.user.__unicode__(), 
-                                    'error':_('etherpad-lite session request returned:') + ' "' + sessResp['message'] + '"'},
+                                    'error':_('etherpad-lite session request returned:') + ' "' + e.reason + '"'},
                                  context_instance=RequestContext(request))
     return response
     
@@ -119,19 +120,18 @@ def pad(request, pk):
 
 
   if ('padSessionID' in request.COOKIES): # Delete the existing session first
-    delReq = pad.server.url + 'api/1/deleteSession?apikey=' + pad.server.apikey + '&sessionID=' + request.COOKIES['sessionID']
-    simplecurl.json(delReq)
+    result2 = epclient.deleteSession(request.COOKIES['sessionID'])
     response.delete_cookie('sessionID', server.hostname)
     response.delete_cookie('padSessionID')
 
   # Set the new session cookie for both the server and the local site
   response.set_cookie('sessionID',
-                      value=sessResp['data']['sessionID'],
+                      value=result['sessionID'],
                       expires=expires,
                       domain=server.hostname,
                       httponly=False)
   response.set_cookie('padSessionID',
-                      value=sessResp['data']['sessionID'],
+                      value=result['sessionID'],
                       expires=expires,
                       httponly=False)
 
