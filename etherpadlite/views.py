@@ -84,7 +84,10 @@ def pad(request, pk):
 
   # Initialize some needed values
   pad = get_object_or_404(Pad, pk=pk)
-  padLink = pad.server.url + 'p/' + pad.group.groupID + '$' + pad.name
+
+  import urllib
+
+  padLink = pad.server.url + 'p/' + pad.group.groupID + '$' + urllib.quote_plus(pad.name)
   server = urlparse(pad.server.url)
   author = PadAuthor.objects.get(user=request.user)
 
