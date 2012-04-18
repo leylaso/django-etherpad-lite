@@ -16,7 +16,7 @@ setup(
     dependency_links = [
         # The original PyEtherpadLite at https://github.com/devjones/PyEtherpadLite is currently
         # not installable by either pip or setup.py, thus a fork is used until further notice
-        'https://github.com/rassie/PyEtherpadLite/zipball/master#egg=PyEtherpadLite',
+        'https://github.com/rassie/PyEtherpadLite/zipball/master#egg=PyEtherpadLite-0.1',
     ],
     license='GPL3',
     include_package_data=True,
