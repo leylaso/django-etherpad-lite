@@ -75,6 +75,19 @@ One exception is the database setting: while it's possible to override the `dbTy
         'databaseAlias': 'nondefault',
     }
 
+Handlers
+--------
+
+`django-etherpad-lite` defines two expiremental settings, allowing the user to overriding the user and group mapping strategy. Those need to be defined in your `settings` module.
+
+    ETHERPAD_AUTHOR_NAME_MAPPER = lambda user: user.get_full_name()
+
+`ETHERPAD_AUTHOR_NAME_MAPPER` defines the name that will be used to represent a Django user in Etherpad-Lite. It needs to be a callable and receives the user as its only parameter.
+
+    ETHERPAD_GROUP_MAPPER = lambda padgroup: padgroup.other_group.id.__str__()
+
+In some situations, `django.contrib.auth.models.Group` is not the `Group` model you actually want to use with Etherpad-Lite. In this case, `ETHERPAD_GROUP_MAPPER` can help. It's a callable receiving a `PadGroup` instance as its only parameter. Now, assuming our custom `Group` model defines a `OneToOneField` to the `PadGroup` model with a properly defined `reverse_name`, we can actually find out the unique ID of the correct group to map to like in the above example.
+
 Support
 -------
 

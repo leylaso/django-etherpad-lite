@@ -2,8 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User, Group
 from django.db.models.signals import pre_delete
 from django.utils.translation import ugettext as _
-
+from django.conf import settings
 from py_etherpad import EtherpadLiteClient
+import types
+   
 
 class PadServer(models.Model):
   """Schema and methods for etherpad-lite servers
@@ -38,8 +40,15 @@ class PadGroup(models.Model):
     return self.group.__unicode__()
 
   def EtherMap(self):
+
+    default_group_mapper = lambda self: self.group.id.__str__()
+    group_mapper = getattr(settings, 'ETHERPAD_GROUP_MAPPER', default_group_mapper)
+
+    if not isinstance(group_mapper, types.FunctionType):
+      group_mapper = default_group_mapper
+
     epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
-    result = epclient.createGroupIfNotExistsFor(self.group.id.__str__())
+    result = epclient.createGroupIfNotExistsFor(group_mapper(self))
 
     self.groupID = result['groupID']
     return result
@@ -86,9 +95,15 @@ class PadAuthor(models.Model):
 
   def EtherMap(self):
 
+    default_author_name_mapper = lambda user: user.__unicode__()
+    author_name_mapper = getattr(settings, 'ETHERPAD_AUTHOR_NAME_MAPPER', default_author_name_mapper)
+
+    if not isinstance(author_name_mapper, types.FunctionType):
+      author_name_mapper = default_author_name_mapper
+
     epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
 
-    result = epclient.createAuthorIfNotExistsFor(self.user.id.__str__(), name=self.__unicode__())
+    result = epclient.createAuthorIfNotExistsFor(self.user.id.__str__(), name=author_name_mapper(self.user))
     self.authorID = result['authorID']
 
     return result
