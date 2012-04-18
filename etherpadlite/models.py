@@ -1,9 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
-from etherpadlite import simplecurl
 from django.db.models.signals import pre_delete
 from django.utils.translation import ugettext as _
 
+from py_etherpad import EtherpadLiteClient
 
 class PadServer(models.Model):
   """Schema and methods for etherpad-lite servers
@@ -18,6 +18,10 @@ class PadServer(models.Model):
 
   def __unicode__(self):
     return self.url
+
+  @property
+  def apiurl(self):
+    return "%s/api" % self.url
 
 
 class PadGroup(models.Model):
@@ -34,9 +38,10 @@ class PadGroup(models.Model):
     return self.group.__unicode__()
 
   def EtherMap(self):
-    req = self.server.url + 'api/1/createGroupIfNotExistsFor?apikey=' + self.server.apikey + '&groupMapper=' + self.group.id.__str__()
-    result = simplecurl.json(req)
-    self.groupID = result['data']['groupID']
+    epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
+    result = epclient.createGroupIfNotExistsFor(self.group.id.__str__())
+
+    self.groupID = result['groupID']
     return result
 
   def save(self, *args, **kwargs):
@@ -45,8 +50,8 @@ class PadGroup(models.Model):
 
   def Destroy(self):
     Pad.objects.filter(group=self).delete()  # First find and delete all associated pads
-    req = self.server.url + 'api/1/deleteGroup?apikey=' + self.server.apikey + '&groupID=' + self.groupID
-    result = simplecurl.json(req)
+    epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
+    result = epclient.deleteGroup(self.groupID)
     return result
 
 def padGroupDel(sender, **kwargs):
@@ -80,9 +85,12 @@ class PadAuthor(models.Model):
     return self.user.__unicode__()
 
   def EtherMap(self):
-    req = self.server.url + 'api/1/createAuthorIfNotExistsFor?apikey=' + self.server.apikey + '&name=' + self.__unicode__() + '&authorMapper=' + self.user.id.__str__()
-    result = simplecurl.json(req)
-    self.authorID = result['data']['authorID']
+
+    epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
+
+    result = epclient.createAuthorIfNotExistsFor(self.user.id.__str__(), name=self.__unicode__())
+    self.authorID = result['authorID']
+
     return result
 
   def GroupSynch(self, *args, **kwargs):
@@ -110,20 +118,30 @@ class Pad(models.Model):
   def __unicode__(self):
     return self.name
 
+  @property
+  def padid(self):
+      return "%s$%s" % (self.group.groupID, self.name)
+
   def Create(self):
-    req = self.server.url + 'api/1/createGroupPad?apikey=' + self.server.apikey + '&groupID=' + self.group.groupID + '&padName=' + self.name
-    result = simplecurl.json(req)
+    epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
+
+    result = epclient.createGroupPad(self.group.groupID, self.name)
+
     return result
 
   def Destroy(self):
-    req = self.server.url + 'api/1/deletePad?apikey=' + self.server.apikey + '&padID=' + self.group.groupID + '$' + self.name
-    result = simplecurl.json(req)
+    epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
+
+    result = epclient.deletePad(self.padid)
+
     return result
 
   def ReadOnly(self):
-    req = self.server.url + 'api/1/getReadOnlyID?apikey=' + self.server.apikey + '&padID=' + self.group.groupID + '$' + self.name
-    result = simplecurl.json(req)
-    return self.server.url + 'ro/' + result['data']['readOnlyID']
+    epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
+
+    result = epclient.getReadOnlyID(self.padid)
+
+    return self.server.url + 'ro/' + result['readOnlyID']
 
   def save(self, *args, **kwargs):
     self.Create()
