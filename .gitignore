@@ -4,3 +4,7 @@
 *.swp
 # Ignore compiled translation files
 *.mo
+# Ignore build directories and artefacts
+/build/
+/dist/
+/*.egg-info
