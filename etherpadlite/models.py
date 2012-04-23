@@ -174,6 +174,10 @@ class Pad(models.Model):
         # Already gone? Good.
         pass
 
+  def isPublic(self):
+    result = self.epclient.getPublicStatus(self.padid)
+    return result['publicStatus']
+
   def ReadOnly(self):
       return self.ro_link
 
