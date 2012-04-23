@@ -120,6 +120,17 @@ def pad(request, pk):
 
   import urllib
 
+  if author not in pad.group.authors.all():
+    response = render_to_response('etherpad-lite/pad.html',
+                                   {'pad': pad, 
+                                    'link': pad.link, 
+                                    'server':server, 
+                                    'querystring': urllib.urlencode(pad_settings).replace('+', ' '),
+                                    'error':_('You are not allowed to view or edit this pad')},
+                                 context_instance=RequestContext(request))
+    return response
+      
+
   try:
     result = epclient.createSession(pad.group.groupID, author.authorID, time.mktime(expires.timetuple()).__str__())
   except Exception, e:
