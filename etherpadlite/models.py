@@ -40,10 +40,12 @@ class PadGroup(models.Model):
   def __unicode__(self):
     return self.group.__unicode__()
 
-  def EtherMap(self):
-    epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
-    result = epclient.createGroupIfNotExistsFor(self.group.id.__str__())
+  @property
+  def epclient(self):
+    return EtherpadLiteClient(self.server.apikey, self.server.apiurl)
 
+  def EtherMap(self):
+    result = self.epclient.createGroupIfNotExistsFor(self.group.id.__str__())
     self.groupID = result['groupID']
     return result
 
@@ -53,8 +55,7 @@ class PadGroup(models.Model):
 
   def Destroy(self):
     Pad.objects.filter(group=self).delete()  # First find and delete all associated pads
-    epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
-    result = epclient.deleteGroup(self.groupID)
+    result = self.epclient.deleteGroup(self.groupID)
     return result
 
 def padGroupDel(sender, **kwargs):
@@ -125,25 +126,21 @@ class Pad(models.Model):
   def padid(self):
       return "%s$%s" % (self.group.groupID, self.name)
 
+  @property
+  def epclient(self):
+    return EtherpadLiteClient(self.server.apikey, self.server.apiurl)
+
   def Create(self):
-    epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
-
-    result = epclient.createGroupPad(self.group.groupID, self.name)
-
+    result = self.epclient.createGroupPad(self.group.groupID, self.name)
     return result
 
   def Destroy(self):
-    epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
-
-    result = epclient.deletePad(self.padid)
+    result = self.epclient.deletePad(self.padid)
 
     return result
 
   def ReadOnly(self):
-    epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
-
-    result = epclient.getReadOnlyID(self.padid)
-
+    result = self.epclient.getReadOnlyID(self.padid)
     return self.server.url + 'ro/' + result['readOnlyID']
 
   def save(self, *args, **kwargs):
