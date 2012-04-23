@@ -79,7 +79,7 @@ class PadAuthor(models.Model):
   user = models.ForeignKey(User)
   authorID = models.CharField(max_length=256, blank=True)
   server = models.ForeignKey(PadServer)
-  group = models.ManyToManyField(PadGroup, blank=True, null=True)
+  group = models.ManyToManyField(PadGroup, blank=True, null=True, related_name='authors')
 
   class Meta:
     verbose_name = _('author')

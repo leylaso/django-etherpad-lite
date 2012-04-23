@@ -91,11 +91,22 @@ def pad(request, pk):
   server = urlparse(pad.server.url)
   author = PadAuthor.objects.get(user=request.user)
 
+  if author not in pad.group.authors.all():
+    response = render_to_response('etherpad-lite/pad.html',
+                                   {'pad': pad, 
+                                    'link': padLink, 
+                                    'server':server, 
+                                    'uname': author.user.__unicode__(), 
+                                    'error':_('You are not allowed to view or edit this pad')},
+                                 context_instance=RequestContext(request))
+    return response
+ 
   # Create the session on the etherpad-lite side
   expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=config.SESSION_LENGTH)
 
   epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
 
+     
   try:
     result = epclient.createSession(pad.group.groupID, author.authorID, time.mktime(expires.timetuple()).__str__())
   except Exception, e:
