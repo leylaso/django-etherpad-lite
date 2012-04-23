@@ -1,8 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
 from django.db.models.signals import pre_delete
-from django.utils.translation import ugettext as _
-
+from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 from py_etherpad import EtherpadLiteClient
 
 class PadServer(models.Model):
