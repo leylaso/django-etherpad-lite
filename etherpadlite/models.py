@@ -4,6 +4,8 @@ from django.db.models.signals import pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from py_etherpad import EtherpadLiteClient
+
+import urllib
 import types
    
 
@@ -141,6 +143,9 @@ class Pad(models.Model):
     epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
 
     result = epclient.createGroupPad(self.group.groupID, self.name)
+  @property
+  def link(self):
+      return "%sp/%s" % (self.server.url, urllib.quote_plus(self.padid))
 
     return result
 
