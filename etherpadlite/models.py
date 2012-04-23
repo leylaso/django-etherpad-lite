@@ -55,8 +55,7 @@ class PadGroup(models.Model):
 
   def Destroy(self):
     Pad.objects.filter(group=self).delete()  # First find and delete all associated pads
-    result = self.epclient.deleteGroup(self.groupID)
-    return result
+    return self.epclient.deleteGroup(self.groupID)
 
 def padGroupDel(sender, **kwargs):
   """Make sure groups are purged from etherpad when deleted
@@ -131,17 +130,13 @@ class Pad(models.Model):
     return EtherpadLiteClient(self.server.apikey, self.server.apiurl)
 
   def Create(self):
-    result = self.epclient.createGroupPad(self.group.groupID, self.name)
-    return result
+    return self.epclient.createGroupPad(self.group.groupID, self.name)
 
   def Destroy(self):
-    result = self.epclient.deletePad(self.padid)
-
-    return result
+    return self.epclient.deletePad(self.padid)
 
   def ReadOnly(self):
-    result = self.epclient.getReadOnlyID(self.padid)
-    return self.server.url + 'ro/' + result['readOnlyID']
+    return self.epclient.getReadOnlyID(self.padid)
 
   def save(self, *args, **kwargs):
     self.Create()
