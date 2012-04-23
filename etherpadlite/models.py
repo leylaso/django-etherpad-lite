@@ -21,7 +21,10 @@ class PadServer(models.Model):
 
   @property
   def apiurl(self):
-    return "%s/api" % self.url
+    if self.url[-1:] == '/':
+      return "%sapi" % self.url
+    else:
+      return "%s/api" % self.url
 
 
 class PadGroup(models.Model):
