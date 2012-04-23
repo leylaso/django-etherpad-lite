@@ -135,6 +135,10 @@ class Pad(models.Model):
   def Destroy(self):
     return self.epclient.deletePad(self.padid)
 
+  def isPublic(self):
+    result = self.epclient.getPublicStatus(self.padid)
+    return result['publicStatus']
+
   def ReadOnly(self):
     return self.epclient.getReadOnlyID(self.padid)
 
