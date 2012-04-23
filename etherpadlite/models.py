@@ -8,6 +8,7 @@ from django.db.models.loading import get_model
 
 import urllib
 import types
+import hashlib
 
 def get_group_model(): 
   model_name = getattr(settings, 'ETHERPAD_GROUP_MODEL', 'django.contrib.auth.Group')
@@ -143,14 +144,17 @@ class Pad(models.Model):
     self.epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
 
   @property
+  def md5hash(self):
+      hashlib.md5(self.name.encode('utf-8')).hexdigest()
+
+  @property
   def padid(self):
-      return "%s$%s" % (self.group.groupID, self.name)
+      return "%s$%s" % (self.group.groupID, self.md5hash)
 
   @property
   def ro_id(self):
       result = self.epclient.getReadOnlyID(self.padid)
       return result['readOnlyID']
-
 
   @property
   def link(self):
@@ -161,7 +165,7 @@ class Pad(models.Model):
       return "%sro/%s" % (self.server.url, self.ro_id)
       
   def Create(self):
-    result = self.epclient.createGroupPad(self.group.groupID, self.name)
+    result = self.epclient.createGroupPad(self.group.groupID, self.md5hash)
 
   def Destroy(self):
     try:
