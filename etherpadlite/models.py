@@ -141,6 +141,11 @@ class Pad(models.Model):
 
   def Create(self):
     epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
+  @property
+  def ro_id(self):
+      result = self.epclient.getReadOnlyID(self.padid)
+      return result['readOnlyID']
+
 
     result = epclient.createGroupPad(self.group.groupID, self.name)
   @property
@@ -148,20 +153,22 @@ class Pad(models.Model):
       return "%sp/%s" % (self.server.url, urllib.quote_plus(self.padid))
 
     return result
+  @property
+  def ro_link(self):
+      return "%sro/%s" % (self.server.url, self.ro_id)
+      
 
   def Destroy(self):
     epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
 
     result = epclient.deletePad(self.padid)
+  def ReadOnly(self):
+      return self.ro_link
 
     return result
 
-  def ReadOnly(self):
-    epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
 
-    result = epclient.getReadOnlyID(self.padid)
 
-    return self.server.url + 'ro/' + result['readOnlyID']
 
   def save(self, *args, **kwargs):
     self.Create()
