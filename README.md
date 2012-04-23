@@ -99,18 +99,25 @@ If `ETHERPAD_SETTINGS` is defined in your `settings.py`, this default configurat
 
 will keep every other setting at default value.
 
-Handlers
---------
+Author name mapping
+-------------------
 
-`django-etherpad-lite` defines two expiremental settings, allowing the user to overriding the user and group mapping strategy. Those need to be defined in your `settings` module.
+`django-etherpad-lite` defines an experimental setting, which allows overriding the user naming.
 
     ETHERPAD_AUTHOR_NAME_MAPPER = lambda user: user.get_full_name()
 
 `ETHERPAD_AUTHOR_NAME_MAPPER` defines the name that will be used to represent a Django user in Etherpad-Lite. It needs to be a callable and receives the user as its only parameter.
 
-    ETHERPAD_GROUP_MAPPER = lambda padgroup: padgroup.other_group.id.__str__()
+Group model overriding
+----------------------
 
-In some situations, `django.contrib.auth.models.Group` is not the `Group` model you actually want to use with Etherpad-Lite. In this case, `ETHERPAD_GROUP_MAPPER` can help. It's a callable receiving a `PadGroup` instance as its only parameter. Now, assuming our custom `Group` model defines a `OneToOneField` to the `PadGroup` model with a properly defined `reverse_name`, we can actually find out the unique ID of the correct group to map to like in the above example.
+Per default, `django-etherpad-lite` works with the `django.contrib.auth.models.Group` model. In some circumstances, this is not desirable, e.g. when a different model is used for grouping users. For those cases, several setting exist:
+
+    ETHERPAD_GROUP_MODEL = 'mysite.myprofile.Group'
+    ETHERPAD_GROUP_PAD_FIELD_NAME = 'pad_group'
+    ETHERPAD_GROUP_USERS_FIELD_NAME = 'members'
+
+`ETHERPAD_GROUP_MODEL` defines the model to be used instead of `django.contrib.auth.models.Group`. `ETHERPAD_GROUP_PAD_FIELD_NAME` is the name of the field on the custom `Group` model, which is usually a `OneToOneField` to the `PadGroup` model with the `reverse_name` property set. `ETHERPAD_GROUP_USERS_FIELD_NAME` is the name of the `ManyToManyField` field on the custom `Group` model, which represents the users in that group.
 
 Support
 -------
