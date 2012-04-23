@@ -36,8 +36,8 @@ Once you have done this, you will need to, at minimum, create a group and add a 
 
 At this point, any users you add to the django project who are members of an etherpad enabled group will be able to take full advantage of the modules features.
 
-Etherpad-lite settings generation
----------------------------------
+Etherpad-lite configuration file generation
+-------------------------------------------
 
 __WARNING__: This feature requires dict-style `settings.DATABASES` setting in your project.
 
@@ -74,6 +74,30 @@ One exception is the database setting: while it's possible to override the `dbTy
     ETHERPAD_CONFIGURATION = {
         'databaseAlias': 'nondefault',
     }
+
+Pad settings configuration
+--------------------------
+
+`django-etherpad-lite` can override default pad settings with the `ETHERPAD_SETTINGS` settings variable. The default setting is:
+
+    ETHERPAD_SETTINGS = {
+        "showControls": True,
+        "showChat": True,
+        "alwaysShowChat": False,
+        "showLineNumbers": False,
+        "useMonospaceFont": False,
+        "noColors": False,
+        "hideQRCode": True,
+        "rtl": False,
+    }
+
+If `ETHERPAD_SETTINGS` is defined in your `settings.py`, this default configuration will be overridden parameter-wise, e.g.
+
+    ETHERPAD_SETTINGS = {
+        "showLineNumbers": True,
+    }
+
+will keep every other setting at default value.
 
 Handlers
 --------
