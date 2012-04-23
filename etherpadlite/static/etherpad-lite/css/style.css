@@ -169,3 +169,10 @@ a.act-add, a.act-del {
   display: inline-block;
   vertical-align: text-bottom;
 }
+
+iframe {
+   height: 95%;
+   width: 100%;
+   min-height: 500px;
+   display: block
+}
