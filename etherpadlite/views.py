@@ -97,6 +97,9 @@ def pad(request, pk):
 
   epclient = EtherpadLiteClient(pad.server.apikey, pad.server.apiurl)
 
+  default_author_name_mapper = lambda user: user.__unicode__()
+  author_name_mapper = getattr(settings, 'ETHERPAD_AUTHOR_NAME_MAPPER', default_author_name_mapper)
+
   default_etherpad_settings = {
       "showControls": True,
       "showChat": True,
@@ -106,7 +109,7 @@ def pad(request, pk):
       "noColors": False,
       "hideQRCode": True,
       "rtl": False,
-      "userName": author.user.__unicode__(),
+      "userName": author_name_mapper(author.user),
   }
 
   pad_settings = default_etherpad_settings
