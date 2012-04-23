@@ -145,7 +145,7 @@ class Pad(models.Model):
 
   @property
   def md5hash(self):
-      hashlib.md5(self.name.encode('utf-8')).hexdigest()
+      return hashlib.md5(self.name.encode('utf-8')).hexdigest()
 
   @property
   def padid(self):
