@@ -164,7 +164,7 @@ def pad(request, pk):
   # Set the new session cookie for both the server and the local site
   response.set_cookie('sessionID',
                       value=result['sessionID'],
-                      expires=expires,
+                      max_age=None,
                       domain=server.hostname,
                       httponly=False)
 
