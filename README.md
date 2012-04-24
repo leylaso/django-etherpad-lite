@@ -18,6 +18,11 @@ Lets assume if you are looking at this you already know how to [install Django](
 
 You will need to clone this repo into your Django project, and add `etherpadlite` to the `INSTALLED_APPS` in your `settings.py`.
 
+Set a cookie domain in your settings.py file that will be used by your django install and etherpad servers:
+
+    # Set the session cookie domain
+    SESSION_COOKIE_DOMAIN = '.example.com'
+
 Finally you will need to add lines to your `urls.py` file. You can either add this line:
 
      url(r'^', include('etherpadlite.urls')),
@@ -85,7 +90,7 @@ Report issues to the [issue queue](https://github.com/sfyn/django-etherpad-lite/
 A note on multi-server support
 ------------------------------
 
-I intend to support multiple etherpad-lite services with this App. At present this functionality is untested. Use it at your own risk.
+I intend to support multiple etherpad-lite services with this App. For the moment etherpad instances must be served from the same domain name or ip address as the django app.
 
 Licensing
 ---------
