@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-20 00:02-0400\n"
+"POT-Creation-Date: 2012-04-23 20:05-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,33 +38,41 @@ msgstr "déscription"
 msgid "server"
 msgstr "serveur"
 
-#: models.py:31
+#: models.py:38
 msgid "group"
 msgstr "groupe"
 
-#: models.py:69
+#: models.py:85
 msgid "author"
 msgstr "auteur"
 
-#: views.py:27
+#: views.py:29
 #, python-format
 msgid "Create pad in %(grp)s"
 msgstr "Créer un pad dans %(grp)s"
 
-#: views.py:43
+#: views.py:47
 msgid "Really delete this pad?"
 msgstr "Effacer vraiment ce pad?"
 
-#: views.py:43
+#: views.py:47
 #, python-format
 msgid "Deleting %(pad)s"
 msgstr "Effacer %(pad)s"
 
-#: templates/etherpad-lite/base.html:14
+#: views.py:100
+msgid "You are not allowed to view or edit this pad"
+msgstr "Vous ne pouvez pas visionner ou modifier ce pad"
+
+#: views.py:118
+msgid "etherpad-lite session request returned:"
+msgstr "retour de la demande de session à etherpad-lite"
+
+#: templates/etherpad-lite/base.html:16
 msgid "profile"
 msgstr "profile"
 
-#: templates/etherpad-lite/base.html:15
+#: templates/etherpad-lite/base.html:17
 msgid "logout"
 msgstr "déconnecter"
 
