@@ -154,24 +154,18 @@ def pad(request, pk):
                                 context_instance=RequestContext(request))
 
 
-  if ('padSessionID' in request.COOKIES): # Delete the existing session first
+  if ('sessionID' in request.COOKIES): # Delete the existing session first
     try:
         result2 = epclient.deleteSession(request.COOKIES['sessionID'])
     except ValueError, e:
         # sessionID not found, i.e. we needn't do anything, it's already gone
         pass
-    response.delete_cookie('sessionID', server.hostname)
-    response.delete_cookie('padSessionID')
 
   # Set the new session cookie for both the server and the local site
   response.set_cookie('sessionID',
                       value=result['sessionID'],
                       expires=expires,
                       domain=server.hostname,
-                      httponly=False)
-  response.set_cookie('padSessionID',
-                      value=result['sessionID'],
-                      expires=expires,
                       httponly=False)
 
   return response
