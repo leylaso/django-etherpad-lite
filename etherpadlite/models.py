@@ -49,9 +49,9 @@ class PadGroup(models.Model):
   class Meta:
     verbose_name = _('group')
 
-  def __init__(self, *args, **kwargs):
-    super(PadGroup, self).__init__(*args, **kwargs)
-    self.epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
+  @property
+  def epclient(self):
+    return EtherpadLiteClient(self.server.apikey, self.server.apiurl)
 
   @property
   def _group(self):
@@ -95,9 +95,9 @@ class PadAuthor(models.Model):
   class Meta:
     verbose_name = _('author')
 
-  def __init__(self, *args, **kwargs):
-    super(PadAuthor, self).__init__(*args, **kwargs)
-    self.epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
+  @property
+  def epclient(self):
+    return EtherpadLiteClient(self.server.apikey, self.server.apiurl)
 
   def __unicode__(self):
     return self.user.__unicode__()
@@ -142,9 +142,9 @@ class Pad(models.Model):
   def __unicode__(self):
     return self.name
 
-  def __init__(self, *args, **kwargs):
-    super(Pad, self).__init__(*args, **kwargs)
-    self.epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
+  @property
+  def epclient(self):
+    return EtherpadLiteClient(self.server.apikey, self.server.apiurl)
 
   @property
   def md5hash(self):
