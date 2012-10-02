@@ -2,153 +2,153 @@ from django.db import models
 from django.contrib.auth.models import User, Group
 from django.db.models.signals import pre_delete
 from django.utils.translation import ugettext_lazy as _
-from django.conf import settings
 from py_etherpad import EtherpadLiteClient
 
+
 class PadServer(models.Model):
-  """Schema and methods for etherpad-lite servers
-  """
-  title = models.CharField(max_length=256)
-  url = models.URLField(max_length=256, verify_exists=False, verbose_name=_('URL'))
-  apikey = models.CharField(max_length=256, verbose_name=_('API key')) 
-  notes = models.TextField(_('description'), blank=True)
+    """Schema and methods for etherpad-lite servers
+    """
+    title = models.CharField(max_length=256)
+    url = models.URLField(max_length=256, verify_exists=False, verbose_name=_('URL'))
+    apikey = models.CharField(max_length=256, verbose_name=_('API key'))
+    notes = models.TextField(_('description'), blank=True)
 
-  class Meta:
-    verbose_name = _('server')
+    class Meta:
+        verbose_name = _('server')
 
-  def __unicode__(self):
-    return self.url
+    def __unicode__(self):
+        return self.url
 
-  @property
-  def apiurl(self):
-    if self.url[-1:] == '/':
-      return "%sapi" % self.url
-    else:
-      return "%s/api" % self.url
+    @property
+    def apiurl(self):
+        if self.url[-1:] == '/':
+            return "%sapi" % self.url
+        else:
+            return "%s/api" % self.url
 
 
 class PadGroup(models.Model):
-  """Schema and methods for etherpad-lite groups
-  """
-  group = models.ForeignKey(Group)
-  groupID = models.CharField(max_length=256, blank=True)
-  server = models.ForeignKey(PadServer)
+    """Schema and methods for etherpad-lite groups
+    """
+    group = models.ForeignKey(Group)
+    groupID = models.CharField(max_length=256, blank=True)
+    server = models.ForeignKey(PadServer)
 
-  class Meta:
-    verbose_name = _('group')
+    class Meta:
+        verbose_name = _('group')
 
-  def __unicode__(self):
-    return self.group.__unicode__()
+    def __unicode__(self):
+        return self.group.__unicode__()
 
-  @property
-  def epclient(self):
-    return EtherpadLiteClient(self.server.apikey, self.server.apiurl)
+    @property
+    def epclient(self):
+        return EtherpadLiteClient(self.server.apikey, self.server.apiurl)
 
-  def EtherMap(self):
-    result = self.epclient.createGroupIfNotExistsFor(self.group.id.__str__())
-    self.groupID = result['groupID']
-    return result
+    def EtherMap(self):
+        result = self.epclient.createGroupIfNotExistsFor(self.group.id.__str__())
+        self.groupID = result['groupID']
+        return result
 
-  def save(self, *args, **kwargs):
-    self.EtherMap()
-    super(PadGroup, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        self.EtherMap()
+        super(PadGroup, self).save(*args, **kwargs)
 
-  def Destroy(self):
-    Pad.objects.filter(group=self).delete()  # First find and delete all associated pads
-    return self.epclient.deleteGroup(self.groupID)
+    def Destroy(self):
+        Pad.objects.filter(group=self).delete()  # First find and delete all associated pads
+        return self.epclient.deleteGroup(self.groupID)
+
 
 def padGroupDel(sender, **kwargs):
-  """Make sure groups are purged from etherpad when deleted
-  """
-  grp = kwargs['instance']
-  grp.Destroy()
+    """Make sure groups are purged from etherpad when deleted
+    """
+    grp = kwargs['instance']
+    grp.Destroy()
 pre_delete.connect(padGroupDel, sender=PadGroup)
 
+
 def groupDel(sender, **kwargs):
-  """Make sure our groups are destroyed properly when auth groups are deleted
-  """
-  grp = kwargs['instance']
-  padGrp = PadGroup.objects.get(group=grp)
-  padGrp.Destroy()
+    """Make sure our groups are destroyed properly when auth groups are deleted
+    """
+    grp = kwargs['instance']
+    padGrp = PadGroup.objects.get(group=grp)
+    padGrp.Destroy()
 pre_delete.connect(groupDel, sender=Group)
 
 
 class PadAuthor(models.Model):
-  """Schema and methods for etherpad-lite authors
-  """
-  user = models.ForeignKey(User)
-  authorID = models.CharField(max_length=256, blank=True)
-  server = models.ForeignKey(PadServer)
-  group = models.ManyToManyField(PadGroup, blank=True, null=True, related_name='authors')
+    """Schema and methods for etherpad-lite authors
+    """
+    user = models.ForeignKey(User)
+    authorID = models.CharField(max_length=256, blank=True)
+    server = models.ForeignKey(PadServer)
+    group = models.ManyToManyField(PadGroup, blank=True, null=True, related_name='authors')
 
-  class Meta:
-    verbose_name = _('author')
+    class Meta:
+        verbose_name = _('author')
 
-  def __unicode__(self):
-    return self.user.__unicode__()
+    def __unicode__(self):
+        return self.user.__unicode__()
 
-  def EtherMap(self):
+    def EtherMap(self):
+        epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
+        result = epclient.createAuthorIfNotExistsFor(self.user.id.__str__(), name=self.__unicode__())
+        self.authorID = result['authorID']
+        return result
 
-    epclient = EtherpadLiteClient(self.server.apikey, self.server.apiurl)
+    def GroupSynch(self, *args, **kwargs):
+        for ag in self.user.groups.all():
+            try:
+                gr = PadGroup.objects.get(group=ag)
+            except PadGroup.DoesNotExist:
+                gr = False
+            if (isinstance(gr, PadGroup)):
+                self.group.add(gr)
+        super(PadAuthor, self).save(*args, **kwargs)
 
-    result = epclient.createAuthorIfNotExistsFor(self.user.id.__str__(), name=self.__unicode__())
-    self.authorID = result['authorID']
-
-    return result
-
-  def GroupSynch(self, *args, **kwargs):
-    for ag in self.user.groups.all():
-      try:
-        gr = PadGroup.objects.get(group=ag)
-      except PadGroup.DoesNotExist:
-        gr = False
-      if (isinstance(gr, PadGroup)):
-        self.group.add(gr)
-    super(PadAuthor, self).save(*args, **kwargs)
-
-  def save(self, *args, **kwargs):
-    self.EtherMap()
-    super(PadAuthor, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        self.EtherMap()
+        super(PadAuthor, self).save(*args, **kwargs)
 
 
 class Pad(models.Model):
-  """Schema and methods for etherpad-lite pads
-  """
-  name = models.CharField(max_length=256)
-  server = models.ForeignKey(PadServer)
-  group = models.ForeignKey(PadGroup)
+    """Schema and methods for etherpad-lite pads
+    """
+    name = models.CharField(max_length=256)
+    server = models.ForeignKey(PadServer)
+    group = models.ForeignKey(PadGroup)
 
-  def __unicode__(self):
-    return self.name
+    def __unicode__(self):
+        return self.name
 
-  @property
-  def padid(self):
-      return "%s$%s" % (self.group.groupID, self.name)
+    @property
+    def padid(self):
+        return "%s$%s" % (self.group.groupID, self.name)
 
-  @property
-  def epclient(self):
-    return EtherpadLiteClient(self.server.apikey, self.server.apiurl)
+    @property
+    def epclient(self):
+        return EtherpadLiteClient(self.server.apikey, self.server.apiurl)
 
-  def Create(self):
-    return self.epclient.createGroupPad(self.group.groupID, self.name)
+    def Create(self):
+        return self.epclient.createGroupPad(self.group.groupID, self.name)
 
-  def Destroy(self):
-    return self.epclient.deletePad(self.padid)
+    def Destroy(self):
+        return self.epclient.deletePad(self.padid)
 
-  def isPublic(self):
-    result = self.epclient.getPublicStatus(self.padid)
-    return result['publicStatus']
+    def isPublic(self):
+        result = self.epclient.getPublicStatus(self.padid)
+        return result['publicStatus']
 
-  def ReadOnly(self):
-    return self.epclient.getReadOnlyID(self.padid)
+    def ReadOnly(self):
+        return self.epclient.getReadOnlyID(self.padid)
 
-  def save(self, *args, **kwargs):
-    self.Create()
-    super(Pad, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        self.Create()
+        super(Pad, self).save(*args, **kwargs)
+
 
 def padDel(sender, **kwargs):
-  """Make sure pads are purged from the etherpad-lite server on deletion
-  """
-  pad = kwargs['instance']
-  pad.Destroy()
+    """Make sure pads are purged from the etherpad-lite server on deletion
+    """
+    pad = kwargs['instance']
+    pad.Destroy()
 pre_delete.connect(padDel, sender=Pad)
