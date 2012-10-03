@@ -78,8 +78,12 @@ def groupDel(sender, **kwargs):
     """Make sure our groups are destroyed properly when auth groups are deleted
     """
     grp = kwargs['instance']
-    padGrp = PadGroup.objects.get(group=grp)
-    padGrp.Destroy()
+    # Make shure auth groups without a pad group can be deleted, too.
+    try:
+        padGrp = PadGroup.objects.get(group=grp)
+        padGrp.Destroy()
+    except Exception:
+        pass
 pre_delete.connect(groupDel, sender=Group)
 
 

@@ -14,5 +14,6 @@ urlpatterns = patterns(
     url(r'^accounts/profile/$', 'etherpadlite.views.profile'),
     url(r'^etherpad/(?P<pk>\d+)/$', 'etherpadlite.views.pad'),
     url(r'^etherpad/create/(?P<pk>\d+)/$', 'etherpadlite.views.padCreate'),
-    url(r'^etherpad/delete/(?P<pk>\d+)/$', 'etherpadlite.views.padDelete')
+    url(r'^etherpad/delete/(?P<pk>\d+)/$', 'etherpadlite.views.padDelete'),
+    url(r'^group/create/$', 'etherpadlite.views.groupCreate')
 )

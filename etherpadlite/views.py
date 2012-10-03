@@ -82,6 +82,46 @@ def padDelete(request, pk):
 
 
 @login_required(login_url='/etherpad')
+def groupCreate(request):
+    """ Create a new Group
+    """
+    message = ""
+    if request.method == 'POST':  # Process the form
+        form = forms.GroupCreate(request.POST)
+        if form.is_valid():
+            group = form.save()
+            # temporarily it is not nessessary to specify a server, so we take
+            # the first one we get.
+            server = PadServer.objects.all()[0]
+            pad_group = PadGroup(group=group, server=server)
+            pad_group.save()
+            request.user.groups.add(group)
+            return HttpResponseRedirect('/accounts/profile/')
+        else:
+            message = _("This Groupname is allready in use or invalid.")
+    else:  # No form to process so create a fresh one
+        form = forms.GroupCreate()
+    con = {
+        'form': form,
+        'title': _('Create a new Group'),
+        'message': message,
+    }
+    con.update(csrf(request))
+    return render_to_response(
+        'etherpad-lite/groupCreate.html',
+        con,
+        context_instance=RequestContext(request)
+    )
+
+
+@login_required(login_url='/etherpad')
+def groupDelete(request, pk):
+    """
+    """
+    pass
+
+
+@login_required(login_url='/etherpad')
 def profile(request):
     """Display a user profile containing etherpad groups and associated pads
     """
