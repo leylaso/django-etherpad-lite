@@ -1,5 +1,7 @@
 from django.conf.urls.defaults import patterns, url
+
 from etherpadlite.models import *
+
 
 urlpatterns = patterns(
     '',

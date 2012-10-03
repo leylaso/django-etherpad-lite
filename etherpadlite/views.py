@@ -1,20 +1,27 @@
 # -*- coding: utf-8 -*-
 
+# Python imports
+import datetime
+import time
+import urllib
+from urlparse import urlparse
+
+# Framework imports
 from django.shortcuts import render_to_response, get_object_or_404
-from etherpadlite.models import *
-from etherpadlite import forms
+
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.core.context_processors import csrf
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
+
+# additional imports
 from py_etherpad import EtherpadLiteClient
 
-import datetime
-import time
+# local imports
+from etherpadlite.models import *
+from etherpadlite import forms
 from etherpadlite import config
-from urlparse import urlparse
-import urllib
 
 
 @login_required(login_url='/etherpad')
