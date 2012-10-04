@@ -118,8 +118,8 @@ def groupCreate(request):
 def groupDelete(request, name):
     """
     """
-    import pdb;pdb.set_trace()
     group = get_object_or_404(Group, name=name)
+    get_object_or_404(PadGroup, group=group)
 
     # Any form submissions will send us back to the profile
     if request.method == 'POST':
