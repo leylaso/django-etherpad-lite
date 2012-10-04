@@ -7,7 +7,7 @@
 {% block content %}
   <h1>{{title}}</h1>
   {{message}}
-  <form action="/group/create/" method="post">
+  <form action="{% url 'etherpadlite_create_group' %}" method="post">
     {% csrf_token %}
     <table>
       <tr>

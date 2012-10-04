@@ -7,7 +7,7 @@
 {% block content %}
   <h1>{% trans "Manage" %} {{ group }}</h1>
   {{message}}
-  <form action="/group/manage/{{ group }}/" method="post">
+  <form action="{% url 'etherpadlite_manage_group' group %}" method="post">
     {% csrf_token %}
     {% for user in users %}
     <p><input type="checkbox" name="userToRemove" value="{{ user.username }}">{{ user.username }}</p>
@@ -15,7 +15,7 @@
     <input class="submit" type="submit" name="removeUsers" value="{%trans "Remove selected users" %}" />
   </form>
 
-  <form action="/group/manage/{{ group }}/" method="post">
+  <form action="{% url 'etherpadlite_manage_group' group %}" method="post">
     {% csrf_token %}
     <p><label for="addUser">{% trans "add a user to this group" %}</label></p>
     <input type="text" name="userToAdd" />

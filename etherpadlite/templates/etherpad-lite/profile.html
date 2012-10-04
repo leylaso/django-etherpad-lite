@@ -12,15 +12,16 @@
   <div class='inliner'>
   {% for group, data in groups.items %}
     <h2>{{group}}</h2>
-    <a class="action act-add" href="/group/manage/{{ group.name }}">{% trans "Manage" %}</a>
-    <a class="action act-del" href="/group/delete/{{ group.name }}">{% trans "Del" %}</a>
+    <a class="action" href="{% url 'etherpadlite_manage_group' group %}">{% trans "Manage" %}</a>
+    <a class="action act-del" href="{% url 'etherpadlite_delete_group' group %}">{% trans "Del" %}</a>
     <ul class="plain">
       {%for pad in data.pads%}
-      <li><a href="/etherpad/{{pad.id}}">{{pad.name}}</a><a class="action act-del" href="/etherpad/delete/{{pad.id}}">{% trans "Del" %}</a></li>
+      <li><a href="{% url 'etherpadlite_view_pad' pad.id %}">{{pad.name}}</a><a class="action act-del" href="{% url 'etherpadlite_delete_pad' pad.id %}">{% trans "Del" %}</a></li>
       {%endfor%}
-      <li><a class="action act-add" href="/etherpad/create/{{data.group.id}}">{% trans "Add" %}</a></li>
+      <li><a class="action act-add" href="{% url 'etherpadlite_create_pad' data.group.id %}">{% trans "Add" %}</a></li>
     </ul>
   {% endfor %}
+  <p><a class="action" href="{% url 'etherpadlite_create_group' %}">{% trans "Add a Group" %}</a></p>
   </div>
 
 {% endblock %}

@@ -7,7 +7,7 @@
 {% block content %}
   <h1>{{title}}</h1>
 
-  <form action="/etherpad/create/{{ pk }}/" method="post">
+  <form action="{% url 'etherpadlite_create_pad' pk %}" method="post">
     {% csrf_token %}
     <table>
       <tr>
