@@ -16,5 +16,5 @@ urlpatterns = patterns(
     url(r'^etherpad/create/(?P<pk>\d+)/$', 'etherpadlite.views.padCreate'),
     url(r'^etherpad/delete/(?P<pk>\d+)/$', 'etherpadlite.views.padDelete'),
     url(r'^group/create/$', 'etherpadlite.views.groupCreate'),
-    url(r'^group/delete/(?P<name>[-\w]+)/$', 'etherpadlite.views.groupDelete')
+    url(r'^group/delete/(?P<name>[-\w]+)/$', 'etherpadlite.views.groupDelete'),
 )
