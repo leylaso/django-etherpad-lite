@@ -173,6 +173,7 @@ def padDel(sender, **kwargs):
         pad = kwargs['instance']
         pad.Destroy()
     except ValueError:
-        # Make shure the deletionprogess dont fail if the pad is allready deletetd from Padserver
+        # Make shure the deletionprogess dont fail if the pad is
+        # allready deletetd from Padserver
         pass
 pre_delete.connect(padDel, sender=Pad)
