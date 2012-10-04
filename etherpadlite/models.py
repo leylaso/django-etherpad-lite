@@ -69,8 +69,11 @@ class PadGroup(models.Model):
 def padGroupDel(sender, **kwargs):
     """Make sure groups are purged from etherpad when deleted
     """
-    grp = kwargs['instance']
-    grp.Destroy()
+    try:
+        grp = kwargs['instance']
+        grp.Destroy()
+    except ValueError:
+        pass
 pre_delete.connect(padGroupDel, sender=PadGroup)
 
 
@@ -83,6 +86,8 @@ def groupDel(sender, **kwargs):
         padGrp = PadGroup.objects.get(group=grp)
         padGrp.Destroy()
     except Exception:
+        # Make shure the deletionprogess dont fail if the group is
+        # allready deletetd from Padserver
         pass
 pre_delete.connect(groupDel, sender=Group)
 
