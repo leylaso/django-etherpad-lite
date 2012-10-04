@@ -169,6 +169,10 @@ class Pad(models.Model):
 def padDel(sender, **kwargs):
     """Make sure pads are purged from the etherpad-lite server on deletion
     """
-    pad = kwargs['instance']
-    pad.Destroy()
+    try:
+        pad = kwargs['instance']
+        pad.Destroy()
+    except ValueError:
+        # Make shure the deletionprogess dont fail if the pad is allready deletetd from Padserver
+        pass
 pre_delete.connect(padDel, sender=Pad)
