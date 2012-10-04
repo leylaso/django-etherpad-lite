@@ -115,10 +115,29 @@ def groupCreate(request):
 
 
 @login_required(login_url='/etherpad')
-def groupDelete(request, pk):
+def groupDelete(request, name):
     """
     """
-    pass
+    import pdb;pdb.set_trace()
+    group = get_object_or_404(Group, name=name)
+
+    # Any form submissions will send us back to the profile
+    if request.method == 'POST':
+        if 'confirm' in request.POST:
+            group.delete()
+        return HttpResponseRedirect('/accounts/profile/')
+
+    con = {
+        'action': '/group/delete/' + name + '/',
+        'question': _('Really delete this group?'),
+        'title': _('Deleting %(group)s') % {'group': group.__unicode__()}
+    }
+    con.update(csrf(request))
+    return render_to_response(
+        'etherpad-lite/confirm.html',
+        con,
+        context_instance=RequestContext(request)
+    )
 
 
 @login_required(login_url='/etherpad')
