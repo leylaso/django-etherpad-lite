@@ -12,6 +12,7 @@
   <div class='inliner'>
   {% for group, data in groups.items %}
     <h2>{{group}}</h2>
+    <a class="action act-add" href="/group/manage/{{ group.name }}">{% trans "Manage" %}</a>
     <a class="action act-del" href="/group/delete/{{ group.name }}">{% trans "Del" %}</a>
     <ul class="plain">
       {%for pad in data.pads%}

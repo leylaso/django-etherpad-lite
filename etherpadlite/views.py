@@ -13,6 +13,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.core.context_processors import csrf
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 # additional imports
@@ -26,7 +27,7 @@ from etherpadlite import config
 
 @login_required(login_url='/etherpad')
 def padCreate(request, pk):
-    """Create a named pad for the given group
+    """ Create a named pad for the given group
     """
     group = get_object_or_404(PadGroup, pk=pk)
 
@@ -58,7 +59,7 @@ def padCreate(request, pk):
 
 @login_required(login_url='/etherpad')
 def padDelete(request, pk):
-    """Delete a given pad
+    """ Delete a given pad
     """
     pad = get_object_or_404(Pad, pk=pk)
 
@@ -83,7 +84,8 @@ def padDelete(request, pk):
 
 @login_required(login_url='/etherpad')
 def groupCreate(request):
-    """ Create a new Group
+    """ Create a new Group, a PadGroup and add this group to the creator of the
+    group.
     """
     message = ""
     if request.method == 'POST':  # Process the form
@@ -116,7 +118,8 @@ def groupCreate(request):
 
 @login_required(login_url='/etherpad')
 def groupDelete(request, name):
-    """
+    """ Delete a given group. This is only possible, if the group hat also a
+    PadGroup
     """
     group = get_object_or_404(Group, name=name)
     get_object_or_404(PadGroup, group=group)
@@ -141,8 +144,46 @@ def groupDelete(request, name):
 
 
 @login_required(login_url='/etherpad')
+def groupManage(request, name):
+    """ Manage a given Group. In this View the user is able to add and remove
+    People from a group
+    """
+    group = get_object_or_404(Group, name=name)
+    get_object_or_404(PadGroup, group=group)
+    # Any form submissions will send us back to the profile
+    con = {
+        'users': group.user_set.values(),
+        'group': group,
+    }
+    if request.method == 'POST':
+        if 'removeUsers' in request.POST and 'userToRemove' in request.POST:
+            for username in request.POST.getlist('userToRemove'):
+                user = User.objects.filter(username=username)[0]
+                user.groups.remove(group)
+                con['message'] = _(
+                    "Removed the following users from group: %s"
+                    % (", ".join(request.POST.getlist('userToRemove')))
+                )
+        elif 'addUser' in request.POST and 'userToAdd' in request.POST:
+            username = request.POST.get('userToAdd')
+            user = User.objects.filter(username=username)
+            if user:
+                user = user[0]
+                user.groups.add(group)
+                con['message'] = _("Added user %s to group." % (user.username))
+            else:
+                con['message'] = _("No user with username %s." % (username))
+    con.update(csrf(request))
+    return render_to_response(
+        'etherpad-lite/groupManage.html',
+        con,
+        context_instance=RequestContext(request)
+    )
+
+
+@login_required(login_url='/etherpad')
 def profile(request):
-    """Display a user profile containing etherpad groups and associated pads
+    """ Display a user profile containing etherpad groups and associated pads
     """
     name = request.user.__unicode__()
 
@@ -176,7 +217,7 @@ def profile(request):
 
 @login_required(login_url='/etherpad')
 def pad(request, pk):
-    """Create and session and display an embedded pad
+    """ Create and session and display an embedded pad
     """
 
     # Initialize some needed values
@@ -242,7 +283,12 @@ def pad(request, pk):
 
     # Delete the existing session first
     if ('padSessionID' in request.COOKIES):
-        epclient.deleteSession(request.COOKIES['sessionID'])
+        try:
+            epclient.deleteSession(request.COOKIES['sessionID'])
+        except ValueError:
+            # Sometimes the deleteSession function creates a sessionID does not
+            # exist Exception during deletion process.
+            pass
         response.delete_cookie('sessionID', server.hostname)
         response.delete_cookie('padSessionID')
 
