@@ -7,14 +7,15 @@ import urllib
 from urlparse import urlparse
 
 # Framework imports
-from django.shortcuts import render_to_response, get_object_or_404
-
+from django.core.context_processors import csrf
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
-from django.core.context_processors import csrf
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
+from django.shortcuts import render_to_response, get_object_or_404
+
 
 # additional imports
 from py_etherpad import EtherpadLiteClient
@@ -40,7 +41,7 @@ def padCreate(request, pk):
                 group=group
             )
             pad.save()
-            return HttpResponseRedirect('/accounts/profile/')
+            return HttpResponseRedirect(reverse('etherpadlite_profile'))
     else:  # No form to process so create a fresh one
         form = forms.PadCreate({'group': group.groupID})
 
@@ -67,7 +68,7 @@ def padDelete(request, pk):
     if request.method == 'POST':
         if 'confirm' in request.POST:
             pad.delete()
-        return HttpResponseRedirect('/accounts/profile/')
+        return HttpResponseRedirect(reverse('etherpadlite_profile'))
 
     con = {
         'action': '/etherpad/delete/' + pk + '/',
@@ -98,7 +99,7 @@ def groupCreate(request):
             pad_group = PadGroup(group=group, server=server)
             pad_group.save()
             request.user.groups.add(group)
-            return HttpResponseRedirect('/accounts/profile/')
+            return HttpResponseRedirect(reverse('etherpadlite_profile'))
         else:
             message = _("This Groupname is allready in use or invalid.")
     else:  # No form to process so create a fresh one
@@ -128,7 +129,7 @@ def groupDelete(request, name):
     if request.method == 'POST':
         if 'confirm' in request.POST:
             group.delete()
-        return HttpResponseRedirect('/accounts/profile/')
+        return HttpResponseRedirect(reverse('etherpadlite_profile'))
 
     con = {
         'action': '/group/delete/' + name + '/',
