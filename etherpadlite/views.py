@@ -283,7 +283,7 @@ def pad(request, pk):
     )
 
     # Delete the existing session first
-    if ('padSessionID' in request.COOKIES):
+    if ('sessionID' in request.COOKIES):
         try:
             epclient.deleteSession(request.COOKIES['sessionID'])
         except ValueError:
