@@ -63,7 +63,12 @@ def padDelete(request, pk):
     """ Delete a given pad
     """
     pad = get_object_or_404(Pad, pk=pk)
-
+    pad_group = pad.group
+    if request.user not in pad_group.moderators.all():
+        return render_to_response(
+            'etherpad-lite/forbidden.html',
+            context_instance=RequestContext(request)
+    )
     # Any form submissions will send us back to the profile
     if request.method == 'POST':
         if 'confirm' in request.POST:
@@ -98,6 +103,7 @@ def groupCreate(request):
             server = PadServer.objects.all()[0]
             pad_group = PadGroup(group=group, server=server)
             pad_group.save()
+            pad_group.moderators.add(request.user)
             request.user.groups.add(group)
             return HttpResponseRedirect(reverse('etherpadlite_profile'))
         else:
@@ -123,8 +129,12 @@ def groupDelete(request, pk):
     PadGroup
     """
     group = get_object_or_404(Group, pk=pk)
-    get_object_or_404(PadGroup, group=group)
-
+    pad_group = get_object_or_404(PadGroup, group=group)
+    if request.user not in pad_group.moderators.all():
+        return render_to_response(
+            'etherpad-lite/forbidden.html',
+            context_instance=RequestContext(request)
+        )
     # Any form submissions will send us back to the profile
     if request.method == 'POST':
         if 'confirm' in request.POST:
@@ -150,7 +160,12 @@ def groupManage(request, pk):
     People from a group
     """
     group = get_object_or_404(Group, pk=pk)
-    get_object_or_404(PadGroup, group=group)
+    pad_group = get_object_or_404(PadGroup, group=group)
+    if request.user not in pad_group.moderators.all():
+        return render_to_response(
+            'etherpad-lite/forbidden.html',
+            context_instance=RequestContext(request)
+        )
     # Any form submissions will send us back to the profile
     con = {
         'users': group.user_set.values(),

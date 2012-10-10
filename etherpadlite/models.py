@@ -41,6 +41,7 @@ class PadGroup(models.Model):
     group = models.ForeignKey(Group)
     groupID = models.CharField(max_length=256, blank=True)
     server = models.ForeignKey(PadServer)
+    moderators = models.ManyToManyField(User, blank=True)
 
     class Meta:
         verbose_name = _('group')
