@@ -21,8 +21,8 @@ urlpatterns = patterns(
         name="etherpadlite_delete_pad"),
     url(r'^group/create/$', 'etherpadlite.views.groupCreate',
         name="etherpadlite_create_group"),
-    url(r'^group/delete/(?P<name>[-\w]+)/$', 'etherpadlite.views.groupDelete',
+    url(r'^group/delete/(?P<pk>\d+)/$', 'etherpadlite.views.groupDelete',
         name="etherpadlite_delete_group"),
-    url(r'^group/manage/(?P<name>[-\w]+)/$', 'etherpadlite.views.groupManage',
+    url(r'^group/manage/(?P<pk>\d+)/$', 'etherpadlite.views.groupManage',
         name="etherpadlite_manage_group"),
 )

@@ -8,6 +8,7 @@ from py_etherpad import EtherpadLiteClient
 import string
 import random
 
+
 class PadServer(models.Model):
     """Schema and methods for etherpad-lite servers
     """
@@ -55,7 +56,7 @@ class PadGroup(models.Model):
         chars=string.ascii_uppercase + string.digits + string.ascii_lowercase):
         """ To make the ID unique, we generate a randomstring
         """
-        return ''.join(random.choice(chars) for x in range(size))    
+        return ''.join(random.choice(chars) for x in range(size))
 
     def EtherMap(self):
         result = self.epclient.createGroupIfNotExistsFor(

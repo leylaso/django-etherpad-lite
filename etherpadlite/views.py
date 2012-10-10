@@ -26,7 +26,7 @@ from etherpadlite import forms
 from etherpadlite import config
 
 
-@login_required(login_url='/etherpad')
+@login_required
 def padCreate(request, pk):
     """ Create a named pad for the given group
     """
@@ -58,7 +58,7 @@ def padCreate(request, pk):
     )
 
 
-@login_required(login_url='/etherpad')
+@login_required
 def padDelete(request, pk):
     """ Delete a given pad
     """
@@ -71,7 +71,7 @@ def padDelete(request, pk):
         return HttpResponseRedirect(reverse('etherpadlite_profile'))
 
     con = {
-        'action': '/etherpad/delete/' + pk + '/',
+        'action': reverse('etherpadlite_delete_pad', kwargs={'pk': pk}),
         'question': _('Really delete this pad?'),
         'title': _('Deleting %(pad)s') % {'pad': pad.__unicode__()}
     }
@@ -83,7 +83,7 @@ def padDelete(request, pk):
     )
 
 
-@login_required(login_url='/etherpad')
+@login_required
 def groupCreate(request):
     """ Create a new Group, a PadGroup and add this group to the creator of the
     group.
@@ -117,12 +117,12 @@ def groupCreate(request):
     )
 
 
-@login_required(login_url='/etherpad')
-def groupDelete(request, name):
+@login_required
+def groupDelete(request, pk):
     """ Delete a given group. This is only possible, if the group hat also a
     PadGroup
     """
-    group = get_object_or_404(Group, name=name)
+    group = get_object_or_404(Group, pk=pk)
     get_object_or_404(PadGroup, group=group)
 
     # Any form submissions will send us back to the profile
@@ -132,7 +132,7 @@ def groupDelete(request, name):
         return HttpResponseRedirect(reverse('etherpadlite_profile'))
 
     con = {
-        'action': '/group/delete/' + name + '/',
+        'action': reverse('etherpadlite_delete_group', kwargs={'pk': pk}),
         'question': _('Really delete this group?'),
         'title': _('Deleting %(group)s') % {'group': group.__unicode__()}
     }
@@ -144,12 +144,12 @@ def groupDelete(request, name):
     )
 
 
-@login_required(login_url='/etherpad')
-def groupManage(request, name):
+@login_required
+def groupManage(request, pk):
     """ Manage a given Group. In this View the user is able to add and remove
     People from a group
     """
-    group = get_object_or_404(Group, name=name)
+    group = get_object_or_404(Group, pk=pk)
     get_object_or_404(PadGroup, group=group)
     # Any form submissions will send us back to the profile
     con = {
@@ -182,7 +182,7 @@ def groupManage(request, name):
     )
 
 
-@login_required(login_url='/etherpad')
+@login_required
 def profile(request):
     """ Display a user profile containing etherpad groups and associated pads
     """
@@ -216,7 +216,7 @@ def profile(request):
     )
 
 
-@login_required(login_url='/etherpad')
+@login_required
 def pad(request, pk):
     """ Create and session and display an embedded pad
     """
