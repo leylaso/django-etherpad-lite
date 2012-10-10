@@ -6,9 +6,10 @@ Replace this with more appropriate tests for your application.
 """
 
 from django.utils import unittest
+from django.contrib.auth.models import *
+
 from etherpadlite.config import TESTING_SERVER as TS
 from etherpadlite.models import *
-from django.contrib.auth.models import *
 
 
 class PadServerTestCase(unittest.TestCase):
