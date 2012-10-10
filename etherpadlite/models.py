@@ -4,6 +4,8 @@ from django.db.models.signals import pre_delete
 from django.utils.translation import ugettext_lazy as _
 from py_etherpad import EtherpadLiteClient
 
+import string
+import random
 
 class PadServer(models.Model):
     """Schema and methods for etherpad-lite servers
@@ -44,8 +46,17 @@ class PadGroup(models.Model):
     def epclient(self):
         return EtherpadLiteClient(self.server.apikey, self.server.apiurl)
 
+    def _get_random_id(self, size=6,
+        chars=string.ascii_uppercase + string.digits + string.ascii_lowercase):
+        """ To make the ID unique, we generate a randomstring
+        """
+        return ''.join(random.choice(chars) for x in range(size))    
+
     def EtherMap(self):
-        result = self.epclient.createGroupIfNotExistsFor(self.group.id.__str__())
+        result = self.epclient.createGroupIfNotExistsFor(
+            self.group.__unicode__() + self._get_random_id() +
+            self.group.id.__str__()
+        )
         self.groupID = result['groupID']
         return result
 
