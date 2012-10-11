@@ -76,6 +76,9 @@ class PadGroup(models.Model):
         Pad.objects.filter(group=self).delete()
         return self.epclient.deleteGroup(self.groupID)
 
+    def is_moderator(self, user):
+        return user in self.moderators.all()
+
 
 def padGroupDel(sender, **kwargs):
     """Make sure groups are purged from etherpad when deleted

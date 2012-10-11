@@ -13,10 +13,6 @@
     <p><input type="checkbox" name="userToRemove" value="{{ user.username }}">{{ user.username }}</p>
     {% endfor %}
     <input class="submit" type="submit" name="removeUsers" value="{%trans "Remove selected users" %}" />
-  </form>
-
-  <form action="{% url 'etherpadlite_manage_group' group %}" method="post">
-    {% csrf_token %}
     <p><label for="addUser">{% trans "add a user to this group" %}</label></p>
     <input type="text" name="userToAdd" />
     <input class="submit" type="submit" name="addUser" value="{%trans "Save" %}" />

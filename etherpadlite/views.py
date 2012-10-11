@@ -9,6 +9,7 @@ from urlparse import urlparse
 # Framework imports
 from django.core.context_processors import csrf
 from django.core.urlresolvers import reverse
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
@@ -64,11 +65,8 @@ def padDelete(request, pk):
     """
     pad = get_object_or_404(Pad, pk=pk)
     pad_group = pad.group
-    if request.user not in pad_group.moderators.all():
-        return render_to_response(
-            'etherpad-lite/forbidden.html',
-            context_instance=RequestContext(request)
-    )
+    if not pad_group.is_moderator(request.user):
+        raise PermissionDenied
     # Any form submissions will send us back to the profile
     if request.method == 'POST':
         if 'confirm' in request.POST:
@@ -130,11 +128,8 @@ def groupDelete(request, pk):
     """
     group = get_object_or_404(Group, pk=pk)
     pad_group = get_object_or_404(PadGroup, group=group)
-    if request.user not in pad_group.moderators.all():
-        return render_to_response(
-            'etherpad-lite/forbidden.html',
-            context_instance=RequestContext(request)
-        )
+    if not pad_group.is_moderator(request.user):
+        raise PermissionDenied
     # Any form submissions will send us back to the profile
     if request.method == 'POST':
         if 'confirm' in request.POST:
@@ -161,35 +156,58 @@ def groupManage(request, pk):
     """
     group = get_object_or_404(Group, pk=pk)
     pad_group = get_object_or_404(PadGroup, group=group)
-    if request.user not in pad_group.moderators.all():
-        return render_to_response(
-            'etherpad-lite/forbidden.html',
-            context_instance=RequestContext(request)
-        )
+    if not pad_group.is_moderator(request.user):
+        raise PermissionDenied
     # Any form submissions will send us back to the profile
     con = {
-        'users': group.user_set.values(),
+        'users': group.user_set.all(),
         'group': group,
+        'moderators': pad_group.moderators.all(),
+        'messages': []
     }
     if request.method == 'POST':
-        if 'removeUsers' in request.POST and 'userToRemove' in request.POST:
+        if 'userToRemove' in request.POST and 'userToRemove' in request.POST:
             for username in request.POST.getlist('userToRemove'):
                 user = User.objects.filter(username=username)[0]
                 user.groups.remove(group)
-                con['message'] = _(
-                    "Removed the following users from group: %s"
-                    % (", ".join(request.POST.getlist('userToRemove')))
+                con['messages'].append({
+                    'text': _("Removed the following users from group: %s"
+                        % (", ".join(request.POST.getlist('userToRemove')))),
+                    'type': 'success'
+                    }
                 )
-        elif 'addUser' in request.POST and 'userToAdd' in request.POST:
+        if 'userToAdd' in request.POST and request.POST.get('userToAdd'):
             username = request.POST.get('userToAdd')
             user = User.objects.filter(username=username)
             if user:
                 user = user[0]
                 user.groups.add(group)
-                con['message'] = _("Added user %s to group." % (user.username))
+                con['messages'].append({
+                    'text': _("Added user %s to group." % (user.username)),
+                    'type': 'success'
+                })
             else:
-                con['message'] = _("No user with username %s." % (username))
+                con['messages'].append({
+                    'text': _("No user with username %s." % (username)),
+                    'type': 'error'
+                })
+        if 'isModerator' in request.POST:
+            new_moderator_list = [User.objects.get(username=user)
+                for user in request.POST.getlist('isModerator')]
+            pad_group.moderators = new_moderator_list
+        else:
+            pad_group.moderators.add(request.user)
+            con['messages'].append({
+                'text': _("At least one moderator musst be added. Added " +
+                    "active User."),
+                'type': 'error'
+            })
+        con['moderators'] = pad_group.moderators.all()
     con.update(csrf(request))
+    pad_group.save()
+    # We have to check again. Its possible that the user removed himself.
+    if not pad_group.is_moderator(request.user):
+        raise PermissionDenied
     return render_to_response(
         'etherpad-lite/groupManage.html',
         con,
