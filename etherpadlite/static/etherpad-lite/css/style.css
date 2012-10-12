@@ -170,3 +170,7 @@ a.act-add, a.act-del {
   display: inline-block;
   vertical-align: text-bottom;
 }
+
+.table {
+  min-width: 600px;
+}

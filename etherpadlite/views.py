@@ -235,9 +235,9 @@ def profile(request):
     for g in author.group.all():
         groups[g.__unicode__()] = {
             'group': g,
-            'pads': Pad.objects.filter(group=g)
+            'pads': Pad.objects.filter(group=g),
+            'moderators': g.moderators.all()
         }
-
     return render_to_response(
         'etherpad-lite/profile.html',
         {
