@@ -47,3 +47,11 @@ class EtherpadLiteClientMock(object):
 
     def getReadOnlyID(self, pad_id):
         return pad_id
+
+    def createSession(self, group_id, author_id, time_tupple):
+        if True:
+            return {'sessionID': 'abcdefg'}
+        else:
+            e = Exception()
+            e.reason = "Testerrormessage"
+            raise e

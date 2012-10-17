@@ -30,8 +30,7 @@ class EtherpadLiteViewsTests(TestCase):
         self.user.groups.add(self.group)
 
     def test_profile_view(self):
-        """ This view is only viewable if you are logged in. So, it should
-        redirect to the loginpage (Statuscode 302). Otherwise it returns 200.
+        """ Tests for the profile view.
         """
 
         response = self.client.get(reverse('etherpadlite_profile'))
@@ -42,11 +41,7 @@ class EtherpadLiteViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_group_create_view(self):
-        """ This view is only viewable if you are logged in. So, it should
-        redirect to the loginpage (Statuscode 302). Otherwise it returns 200.
-
-        After verifying this works well, lets try to create a group that
-        allready exist, followed by a new group.
+        """ Tests for group creation view.
         """
         response = self.client.get(reverse('etherpadlite_create_group'))
         self.assertEqual(response.status_code, 302)
@@ -72,11 +67,7 @@ class EtherpadLiteViewsTests(TestCase):
         self.assertEqual(reponse.status_code, 302)
 
     def test_group_delete(self):
-        """ This view is only viewable if you are logged in. So, it should
-        redirect to the loginpage (Statuscode 302). Otherwise it returns 200.
-
-        The User can't delete a group if he is not moderator of the specific
-        group.
+        """ Tests for group deletion view.
         """
         pk = self.group.id
         response = self.client.get(
@@ -103,13 +94,7 @@ class EtherpadLiteViewsTests(TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_group_manage(self):
-        """ This view is only viewable if you are logged in. So, it should
-        redirect to the loginpage (Statuscode 302). Otherwise it returns 200.
-
-        The User can't manage a group if he is not moderator of the specific
-        group. This view is able to add and remove userer to group. It also can
-        remove add or remove a moderator. If no moderator is set, the actual
-        user should become a modertor.
+        """ Tests for group manage view.
         """
         pk = self.group.id
         response = self.client.get(
@@ -180,7 +165,7 @@ class EtherpadLiteViewsTests(TestCase):
             self.user in self.group.user_set.all())
 
     def test_pad_create_view(self):
-        """
+        """ Tests for pad create view.
         """
         pk = self.group.id
         response = self.client.get(
@@ -202,7 +187,7 @@ class EtherpadLiteViewsTests(TestCase):
             self.padGroup.pad_set.all())
 
     def test_pad_delete_view(self):
-        """
+        """ Tests for pad delete view.
         """
         test_pad = Pad.objects.create(
             server=self.server,
@@ -234,8 +219,39 @@ class EtherpadLiteViewsTests(TestCase):
         self.assertTrue(self.padGroup.pad_set.count() == 0)
 
     def test_pad_view(self):
+        """ Tests for Pad view.
         """
-        """
+        self.author = PadAuthor.objects.create(
+            user=self.user,
+            server=self.server
+        )
+        test_pad = Pad.objects.create(
+            server=self.server,
+            group=self.padGroup,
+            name="Testpad"
+        )
+        test_pad = Pad.objects.create(
+            server=self.server,
+            group=self.padGroup,
+            name="Testpad2"
+        )
+        test_pad.save()
+        response = self.client.get(
+            reverse('etherpadlite_view_pad', kwargs={'pk': test_pad.id})
+        )
+        self.assertEqual(response.status_code, 302)
+
+        self.client.login(username="Obi Wan Kenobi", password="lightsaber")
+        response = self.client.get(
+            reverse('etherpadlite_view_pad', kwargs={'pk': test_pad.id})
+        )
+        self.assertEqual(response.status_code, 200)
+
+        self.padGroup.authors.add(self.author)
+        response = self.client.get(
+            reverse('etherpadlite_view_pad', kwargs={'pk': test_pad.id})
+        )
+        self.assertEqual(response.status_code, 200)
 
     def tearDown(self):
         self.server.delete()
