@@ -152,7 +152,7 @@ class PadAuthor(models.Model):
 class Pad(models.Model):
     """Schema and methods for etherpad-lite pads
     """
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=50)
     server = models.ForeignKey(PadServer)
     group = models.ForeignKey(PadGroup)
 
