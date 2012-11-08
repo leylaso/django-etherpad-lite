@@ -13,8 +13,8 @@
   <div id="nav"><nav>
     {% block nav %}
       {% if user.is_authenticated %}
-      <a class="nav" href="/accounts/profile/">{% trans "profile" %}</a>
-      <a class="nav" href="/logout">{% trans "logout" %}</a>
+      <a class="nav" href="{% url etherpadlite_profile %}">{% trans "profile" %}</a>
+      <a class="nav" href="{% url etherpadlite_logout %}">{% trans "logout" %}</a>
       {% endif %}
     {% endblock %}
   </nav></div>

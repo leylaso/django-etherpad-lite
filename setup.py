@@ -12,7 +12,7 @@ setup(
     install_requires=[
         'Django',
         'PyEtherpadLite',
-        'south'
+        'South'
     ],
     dependency_links=[
         # The original PyEtherpadLite at

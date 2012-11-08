@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from etherpadlite.models import *
 from django.contrib import admin
+
+from etherpadlite.models import *
 
 
 class PadAuthorAdmin(admin.ModelAdmin):
