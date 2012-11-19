@@ -1,7 +1,9 @@
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.contrib.auth.models import User, Group
+
 from django.utils.translation import ugettext_lazy as _
+from django.utils.timezone import now
 
 from py_etherpad import EtherpadLiteClient
 
@@ -155,6 +157,7 @@ class Pad(models.Model):
     name = models.CharField(max_length=50)
     server = models.ForeignKey(PadServer)
     group = models.ForeignKey(PadGroup)
+    modification_date = models.DateTimeField(editable=False, default=now())
 
     def __unicode__(self):
         return self.name
@@ -182,6 +185,8 @@ class Pad(models.Model):
 
     def save(self, *args, **kwargs):
         self.Create()
+        if not self.id:
+            self.modification_date = now()
         super(Pad, self).save(*args, **kwargs)
 
 
