@@ -157,7 +157,7 @@ class Pad(models.Model):
     name = models.CharField(max_length=50)
     server = models.ForeignKey(PadServer)
     group = models.ForeignKey(PadGroup)
-    modification_date = models.DateTimeField(editable=False, default=now())
+    modification_date = models.DateTimeField(editable=False, default=now)
 
     def __unicode__(self):
         return self.name
