@@ -184,8 +184,8 @@ class Pad(models.Model):
         return self.epclient.getReadOnlyID(self.padid)
 
     def save(self, *args, **kwargs):
-        self.Create()
         if not self.id:
+            self.Create()
             self.modification_date = now()
         super(Pad, self).save(*args, **kwargs)
 

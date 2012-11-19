@@ -12,9 +12,13 @@ from django.core.urlresolvers import reverse
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+
 from django.utils.translation import ugettext_lazy as _
+from django.utils.timezone import now
+
 from django.shortcuts import render_to_response, get_object_or_404
 
 
@@ -256,6 +260,8 @@ def pad(request, pk):
 
     # Initialize some needed values
     pad = get_object_or_404(Pad, pk=pk)
+    pad.modification_date = now()
+    pad.save()
     padLink = pad.server.url + 'p/' + pad.group.groupID + '$' + \
         urllib.quote_plus(pad.name)
     server = urlparse(pad.server.url)
