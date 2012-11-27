@@ -13,16 +13,18 @@ urlpatterns = patterns(
         name="etherpadlite_logout"),
     url(r'^accounts/profile/$', 'etherpadlite.views.profile',
         name="etherpadlite_profile"),
-    url(r'^etherpad/(?P<pk>\d+)/$', 'etherpadlite.views.pad',
+
+    url(r'^etherpad/view/(?P<slug>[-\w]+)/(?P<pk>\d+)/$', 'etherpadlite.views.pad',
         name="etherpadlite_view_pad"),
-    url(r'^etherpad/create/(?P<pk>\d+)/$', 'etherpadlite.views.padCreate',
+    url(r'^etherpad/create/(?P<slug>[-\w]+)/$', 'etherpadlite.views.padCreate',
         name="etherpadlite_create_pad"),
-    url(r'^etherpad/delete/(?P<pk>\d+)/$', 'etherpadlite.views.padDelete',
+    url(r'^etherpad/delete/(?P<slug>[-\w]+)/(?P<pk>\d+)/$', 'etherpadlite.views.padDelete',
         name="etherpadlite_delete_pad"),
+
     url(r'^group/create/$', 'etherpadlite.views.groupCreate',
         name="etherpadlite_create_group"),
-    url(r'^group/delete/(?P<pk>\d+)/$', 'etherpadlite.views.groupDelete',
+    url(r'^group/delete/(?P<slug>[-\w]+)/$', 'etherpadlite.views.groupDelete',
         name="etherpadlite_delete_group"),
-    url(r'^group/manage/(?P<pk>\d+)/$', 'etherpadlite.views.groupManage',
+    url(r'^group/manage/(?P<slug>[-\w]+)/$', 'etherpadlite.views.groupManage',
         name="etherpadlite_manage_group"),
 )

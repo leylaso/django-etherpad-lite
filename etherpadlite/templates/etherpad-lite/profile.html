@@ -13,19 +13,19 @@
   {% for group, data in groups.items %}
     <h2>{{group}}</h2>
     {% if user in data.moderators %}
-    <a class="action" href="{% url 'etherpadlite_manage_group' data.group.id %}">{% trans "Manage" %}</a>
-    <a class="action act-del" href="{% url 'etherpadlite_delete_group' data.group.id %}">{% trans "Del" %}</a>
+    <a class="action" href="{% url 'etherpadlite_manage_group' data.group.slug %}">{% trans "Manage" %}</a>
+    <a class="action act-del" href="{% url 'etherpadlite_delete_group' data.group.slug %}">{% trans "Del" %}</a>
     {% endif %}
     <ul class="plain">
       {%for pad in data.pads%}
       <li>
-        <a href="{% url 'etherpadlite_view_pad' pad.id %}">{{pad.name}}</a>
+        <a href="{% url 'etherpadlite_view_pad' data.group.slug pad.id %}">{{pad.name}}</a>
         {% if user in data.moderators %}
-        <a class="action act-del" href="{% url 'etherpadlite_delete_pad' pad.id %}">{% trans "Del" %}</a>
+        <a class="action act-del" href="{% url 'etherpadlite_delete_pad' data.group.slug pad.id %}">{% trans "Del" %}</a>
         {% endif %}
       </li>
       {%endfor%}
-      <li><a class="action act-add" href="{% url 'etherpadlite_create_pad' data.group.id %}">{% trans "Add" %}</a></li>
+      <li><a class="action act-add" href="{% url 'etherpadlite_create_pad' data.group.slug %}">{% trans "Add" %}</a></li>
     </ul>
   {% endfor %}
   <p><a class="action" href="{% url 'etherpadlite_create_group' %}">{% trans "Add a Group" %}</a></p>

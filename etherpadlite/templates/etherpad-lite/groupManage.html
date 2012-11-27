@@ -6,7 +6,7 @@
 
 {% block content %}
   <h1>{% trans "Manage" %} {{ group }}</h1>
-  <form action="{% url 'etherpadlite_manage_group' group.id %}" method="post" class="form-horizontal">
+  <form action="{% url 'etherpadlite_manage_group' slug %}" method="post" class="form-horizontal">
   {% csrf_token %}
     <table class="table">
       <caption>{% trans "To remove a user from this Group, select him with the checkbox in the first row and click 'Apply Changes'. To grant them moderator rights, mark him on the checkbox in the last row." %} </caption>
@@ -39,7 +39,7 @@
       <input type="text" name="userToAdd" placeholder="{% trans "Username..." %}" />
     </p>
     <input class="submit" type="submit" value="{% trans "Apply Changes" %}"/>
-    <a class="submit" href="{% url 'etherpadlite_delete_group' group.id %}">
+    <a class="submit" href="{% url 'etherpadlite_delete_group' slug %}">
       {% trans "Delete this group" %}
     </a>
   </form>

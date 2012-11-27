@@ -5,6 +5,8 @@ from django.contrib.auth.models import User, Group
 from django.utils.translation import ugettext_lazy as _
 from django.utils.timezone import now
 
+from django.template.defaultfilters import slugify
+
 from py_etherpad import EtherpadLiteClient
 
 import string
@@ -42,6 +44,7 @@ class PadGroup(models.Model):
     """
     group = models.ForeignKey(Group)
     groupID = models.CharField(max_length=256, blank=True)
+    slug = models.SlugField(unique=True, default=slugify(group))
     server = models.ForeignKey(PadServer)
     moderators = models.ManyToManyField(User, blank=True)
 
@@ -70,7 +73,9 @@ class PadGroup(models.Model):
         return result
 
     def save(self, *args, **kwargs):
-        self.EtherMap()
+        if not self.id:
+            self.EtherMap()
+            self.slug = slugify(self.group)
         super(PadGroup, self).save(*args, **kwargs)
 
     def Destroy(self):
@@ -155,6 +160,7 @@ class Pad(models.Model):
     """Schema and methods for etherpad-lite pads
     """
     name = models.CharField(max_length=50)
+    slug = models.SlugField(default=slugify(name))
     server = models.ForeignKey(PadServer)
     group = models.ForeignKey(PadGroup)
     modification_date = models.DateTimeField(editable=False, default=now)

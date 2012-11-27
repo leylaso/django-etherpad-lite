@@ -5,10 +5,11 @@ from django.utils.translation import ugettext_lazy as _
 
 class PadCreate(forms.Form):
     name = forms.CharField(label=_("Name"))
+    slug = forms.CharField(label=_("Slug"))
     group = forms.CharField(widget=forms.HiddenInput)
 
 
 class GroupCreate(forms.ModelForm):
     class Meta:
         model = Group
-        exclude = ('permissions')
+        exclude = ('permissions', 'slug')
