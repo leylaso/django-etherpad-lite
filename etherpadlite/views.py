@@ -61,10 +61,11 @@ def padCreate(request, slug):
 
 
 @login_required
-def padDelete(request, slug, pk):
+def padDelete(request, group_slug, pad_slug):
     """ Delete a given pad
     """
-    pad = get_object_or_404(Pad, pk=pk)
+    group = get_object_or_404(PadGroup, slug=group_slug)
+    pad = get_object_or_404(Pad, slug=pad_slug, group=group)
     pad_group = pad.group
     if not pad_group.is_moderator(request.user):
         raise PermissionDenied
@@ -75,7 +76,7 @@ def padDelete(request, slug, pk):
         return HttpResponseRedirect(reverse('etherpadlite_profile'))
 
     con = {
-        'action': reverse('etherpadlite_delete_pad', kwargs={'pk': pk, 'slug': slug}),
+        'action': reverse('etherpadlite_delete_pad', kwargs={'group_slug': group_slug, 'pad_slug': pad_slug}),
         'question': _('Really delete this pad?'),
         'title': _('Deleting %(pad)s') % {'pad': pad.__unicode__()}
     }
@@ -252,12 +253,12 @@ def profile(request):
 
 
 @login_required
-def pad(request, slug, pk):
+def pad(request, group_slug, pad_slug):
     """ Create and session and display an embedded pad
     """
-
     # Initialize some needed values
-    pad = get_object_or_404(Pad, pk=pk)
+    group = get_object_or_404(PadGroup, slug=group_slug)
+    pad = get_object_or_404(Pad, slug=pad_slug, group=group)
     padLink = pad.server.url + 'p/' + pad.group.groupID + '$' + \
         urllib.quote_plus(pad.name)
     server = urlparse(pad.server.url)

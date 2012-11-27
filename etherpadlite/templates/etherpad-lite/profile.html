@@ -19,9 +19,9 @@
     <ul class="plain">
       {%for pad in data.pads%}
       <li>
-        <a href="{% url 'etherpadlite_view_pad' data.group.slug pad.id %}">{{pad.name}}</a>
+        <a href="{% url 'etherpadlite_view_pad' data.group.slug pad.slug %}">{{pad.name}}</a>
         {% if user in data.moderators %}
-        <a class="action act-del" href="{% url 'etherpadlite_delete_pad' data.group.slug pad.id %}">{% trans "Del" %}</a>
+        <a class="action act-del" href="{% url 'etherpadlite_delete_pad' data.group.slug pad.slug %}">{% trans "Del" %}</a>
         {% endif %}
       </li>
       {%endfor%}

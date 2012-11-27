@@ -14,11 +14,11 @@ urlpatterns = patterns(
     url(r'^accounts/profile/$', 'etherpadlite.views.profile',
         name="etherpadlite_profile"),
 
-    url(r'^etherpad/view/(?P<slug>[-\w]+)/(?P<pk>\d+)/$', 'etherpadlite.views.pad',
+    url(r'^etherpad/view/(?P<group_slug>[-\w]+)/(?P<pad_slug>[-\w]+)/$', 'etherpadlite.views.pad',
         name="etherpadlite_view_pad"),
     url(r'^etherpad/create/(?P<slug>[-\w]+)/$', 'etherpadlite.views.padCreate',
         name="etherpadlite_create_pad"),
-    url(r'^etherpad/delete/(?P<slug>[-\w]+)/(?P<pk>\d+)/$', 'etherpadlite.views.padDelete',
+    url(r'^etherpad/delete/(?P<group_slug>[-\w]+)/(?P<pad_slug>[-\w]+)/$', 'etherpadlite.views.padDelete',
         name="etherpadlite_delete_pad"),
 
     url(r'^group/create/$', 'etherpadlite.views.groupCreate',
