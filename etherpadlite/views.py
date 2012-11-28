@@ -12,6 +12,7 @@ from django.core.urlresolvers import reverse
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
+from django.template.defaultfilters import slugify
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
@@ -36,11 +37,13 @@ def padCreate(request, slug):
     if request.method == 'POST':  # Process the form
         form = forms.PadCreate(request.POST)
         if form.is_valid():
+            name = form.cleaned_data['name']
+            pad_slug = slugify(name)
             pad = Pad(
-                name=form.cleaned_data['name'],
+                name=name,
                 server=group.server,
                 group=group,
-                slug=form.cleaned_data['slug']
+                slug=pad_slug
             )
             pad.save()
             return HttpResponseRedirect(reverse('etherpadlite_profile'))

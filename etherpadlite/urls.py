@@ -14,17 +14,17 @@ urlpatterns = patterns(
     url(r'^accounts/profile/$', 'etherpadlite.views.profile',
         name="etherpadlite_profile"),
 
-    url(r'^etherpad/view/(?P<group_slug>[-\w]+)/(?P<pad_slug>[-\w]+)/$', 'etherpadlite.views.pad',
+    url(r'^etherpad/(?P<group_slug>[-\w]+)/(?P<pad_slug>[-\w]+)/$', 'etherpadlite.views.pad',
         name="etherpadlite_view_pad"),
-    url(r'^etherpad/create/(?P<slug>[-\w]+)/$', 'etherpadlite.views.padCreate',
+    url(r'^etherpad/(?P<slug>[-\w]+)$', 'etherpadlite.views.padCreate',
         name="etherpadlite_create_pad"),
-    url(r'^etherpad/delete/(?P<group_slug>[-\w]+)/(?P<pad_slug>[-\w]+)/$', 'etherpadlite.views.padDelete',
+    url(r'^etherpad/(?P<group_slug>[-\w]+)/(?P<pad_slug>[-\w]+)/delete/$', 'etherpadlite.views.padDelete',
         name="etherpadlite_delete_pad"),
 
-    url(r'^group/create/$', 'etherpadlite.views.groupCreate',
+    url(r'^group/$', 'etherpadlite.views.groupCreate',
         name="etherpadlite_create_group"),
-    url(r'^group/delete/(?P<slug>[-\w]+)/$', 'etherpadlite.views.groupDelete',
+    url(r'^group/(?P<slug>[-\w]+)/delete/$', 'etherpadlite.views.groupDelete',
         name="etherpadlite_delete_group"),
-    url(r'^group/manage/(?P<slug>[-\w]+)/$', 'etherpadlite.views.groupManage',
+    url(r'^group/(?P<slug>[-\w]+)/manage/$', 'etherpadlite.views.groupManage',
         name="etherpadlite_manage_group"),
 )
