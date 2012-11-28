@@ -260,8 +260,11 @@ def pad(request, pk):
 
     # Initialize some needed values
     pad = get_object_or_404(Pad, pk=pk)
+
+    # It's not a clean way to set modification_date. We shoud refactor this later
     pad.modification_date = now()
     pad.save()
+
     padLink = pad.server.url + 'p/' + pad.group.groupID + '$' + \
         urllib.quote_plus(pad.name)
     server = urlparse(pad.server.url)
