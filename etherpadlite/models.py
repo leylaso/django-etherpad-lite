@@ -44,7 +44,7 @@ class PadGroup(models.Model):
     """
     group = models.ForeignKey(Group)
     groupID = models.CharField(max_length=256, blank=True)
-    slug = models.SlugField(unique=True, default=slugify(group))
+    slug = models.SlugField(unique=True, null=True)
     server = models.ForeignKey(PadServer)
     moderators = models.ManyToManyField(User, blank=True)
 
@@ -75,7 +75,7 @@ class PadGroup(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             self.EtherMap()
-            self.slug = slugify(self.group)
+            self.slug = _slugify_name(self)
         super(PadGroup, self).save(*args, **kwargs)
 
     def Destroy(self):
@@ -160,7 +160,7 @@ class Pad(models.Model):
     """Schema and methods for etherpad-lite pads
     """
     name = models.CharField(max_length=50)
-    slug = models.SlugField(default=slugify(name))
+    slug = models.SlugField(null=True)
     server = models.ForeignKey(PadServer)
     group = models.ForeignKey(PadGroup)
     modification_date = models.DateTimeField(editable=False, default=now)

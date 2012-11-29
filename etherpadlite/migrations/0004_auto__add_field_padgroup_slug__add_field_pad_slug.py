@@ -8,13 +8,20 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'Pad.slug'
-        db.add_column('etherpadlite_pad', 'slug',
-                      self.gf('django.db.models.fields.SlugField')(default=u'djangodbmodelsfieldscharfield', max_length=50),
+        # Adding field 'PadGroup.slug'
+        db.add_column('etherpadlite_padgroup', 'slug',
+                      self.gf('django.db.models.fields.SlugField')(max_length=50, unique=True, null=True),
                       keep_default=False)
 
+        # Adding field 'Pad.slug'
+        db.add_column('etherpadlite_pad', 'slug',
+                      self.gf('django.db.models.fields.SlugField')(max_length=50, null=True),
+                      keep_default=False)
 
     def backwards(self, orm):
+        # Deleting field 'PadGroup.slug'
+        db.delete_column('etherpadlite_padgroup', 'slug')
+
         # Deleting field 'Pad.slug'
         db.delete_column('etherpadlite_pad', 'slug')
 
@@ -63,7 +70,7 @@ class Migration(SchemaMigration):
             'modification_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'server': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['etherpadlite.PadServer']"}),
-            'slug': ('django.db.models.fields.SlugField', [], {'default': "u'djangodbmodelsfieldscharfield'", 'max_length': '50'})
+            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'null': 'True'})
         },
         'etherpadlite.padauthor': {
             'Meta': {'object_name': 'PadAuthor'},
@@ -80,7 +87,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'moderators': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.User']", 'symmetrical': 'False', 'blank': 'True'}),
             'server': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['etherpadlite.PadServer']"}),
-            'slug': ('django.db.models.fields.SlugField', [], {'default': "u'djangodbmodelsfieldsrelatedforeignkey'", 'unique': 'True', 'max_length': '50'})
+            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'unique': 'True', 'null': 'True'})
         },
         'etherpadlite.padserver': {
             'Meta': {'object_name': 'PadServer'},
