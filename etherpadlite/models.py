@@ -1,12 +1,17 @@
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.contrib.auth.models import User, Group
+
 from django.utils.translation import ugettext_lazy as _
+from django.utils.timezone import now
+
+from django.template.defaultfilters import slugify
 
 from py_etherpad import EtherpadLiteClient
 
 import string
 import random
+
 
 class PadServer(models.Model):
     """Schema and methods for etherpad-lite servers
@@ -39,7 +44,9 @@ class PadGroup(models.Model):
     """
     group = models.ForeignKey(Group)
     groupID = models.CharField(max_length=256, blank=True)
+    slug = models.SlugField(unique=True, null=True)
     server = models.ForeignKey(PadServer)
+    moderators = models.ManyToManyField(User, blank=True)
 
     class Meta:
         verbose_name = _('group')
@@ -55,7 +62,7 @@ class PadGroup(models.Model):
         chars=string.ascii_uppercase + string.digits + string.ascii_lowercase):
         """ To make the ID unique, we generate a randomstring
         """
-        return ''.join(random.choice(chars) for x in range(size))    
+        return ''.join(random.choice(chars) for x in range(size))
 
     def EtherMap(self):
         result = self.epclient.createGroupIfNotExistsFor(
@@ -66,7 +73,9 @@ class PadGroup(models.Model):
         return result
 
     def save(self, *args, **kwargs):
-        self.EtherMap()
+        if not self.id:
+            self.EtherMap()
+            self.slug = slugify(self)
         super(PadGroup, self).save(*args, **kwargs)
 
     def Destroy(self):
@@ -74,12 +83,18 @@ class PadGroup(models.Model):
         Pad.objects.filter(group=self).delete()
         return self.epclient.deleteGroup(self.groupID)
 
+    def is_moderator(self, user):
+        return user in self.moderators.all()
+
 
 def padGroupDel(sender, **kwargs):
     """Make sure groups are purged from etherpad when deleted
     """
-    grp = kwargs['instance']
-    grp.Destroy()
+    try:
+        grp = kwargs['instance']
+        grp.Destroy()
+    except ValueError:
+        pass
 pre_delete.connect(padGroupDel, sender=PadGroup)
 
 
@@ -92,6 +107,8 @@ def groupDel(sender, **kwargs):
         padGrp = PadGroup.objects.get(group=grp)
         padGrp.Destroy()
     except Exception:
+        # Make shure the deletionprogess dont fail if the group is
+        # allready deletetd from Padserver
         pass
 pre_delete.connect(groupDel, sender=Group)
 
@@ -142,9 +159,11 @@ class PadAuthor(models.Model):
 class Pad(models.Model):
     """Schema and methods for etherpad-lite pads
     """
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=50)
+    slug = models.SlugField(null=True)
     server = models.ForeignKey(PadServer)
     group = models.ForeignKey(PadGroup)
+    modification_date = models.DateTimeField(editable=False, default=now)
 
     def __unicode__(self):
         return self.name
@@ -171,13 +190,22 @@ class Pad(models.Model):
         return self.epclient.getReadOnlyID(self.padid)
 
     def save(self, *args, **kwargs):
-        self.Create()
+        if not self.slug:
+            self.slug = slugify(self.name)
+        if not self.id:
+            self.Create()
+            self.modification_date = now()
         super(Pad, self).save(*args, **kwargs)
 
 
 def padDel(sender, **kwargs):
     """Make sure pads are purged from the etherpad-lite server on deletion
     """
-    pad = kwargs['instance']
-    pad.Destroy()
+    try:
+        pad = kwargs['instance']
+        pad.Destroy()
+    except ValueError:
+        # Make shure the deletionprogess dont fail if the pad is
+        # allready deletetd from Padserver
+        pass
 pre_delete.connect(padDel, sender=Pad)

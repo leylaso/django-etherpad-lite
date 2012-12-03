@@ -7,13 +7,22 @@ import urllib
 from urlparse import urlparse
 
 # Framework imports
-from django.shortcuts import render_to_response, get_object_or_404
-
+from django.core.context_processors import csrf
+from django.core.urlresolvers import reverse
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
-from django.core.context_processors import csrf
+
+from django.template.defaultfilters import slugify
+
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+
 from django.utils.translation import ugettext_lazy as _
+from django.utils.timezone import now
+
+from django.shortcuts import render_to_response, get_object_or_404
+
 
 # additional imports
 from py_etherpad import EtherpadLiteClient
@@ -24,28 +33,31 @@ from etherpadlite import forms
 from etherpadlite import config
 
 
-@login_required(login_url='/etherpad')
-def padCreate(request, pk):
-    """Create a named pad for the given group
+@login_required
+def padCreate(request, slug):
+    """ Create a named pad for the given group
     """
-    group = get_object_or_404(PadGroup, pk=pk)
+    group = get_object_or_404(PadGroup, slug=slug)
 
     if request.method == 'POST':  # Process the form
         form = forms.PadCreate(request.POST)
         if form.is_valid():
+            name = form.cleaned_data['name']
+            pad_slug = slugify(name)
             pad = Pad(
-                name=form.cleaned_data['name'],
+                name=name,
                 server=group.server,
-                group=group
+                group=group,
+                slug=pad_slug
             )
             pad.save()
-            return HttpResponseRedirect('/accounts/profile/')
+            return HttpResponseRedirect(reverse('etherpadlite_profile'))
     else:  # No form to process so create a fresh one
         form = forms.PadCreate({'group': group.groupID})
 
     con = {
         'form': form,
-        'pk': pk,
+        'slug': slug,
         'title': _('Create pad in %(grp)s') % {'grp': group.__unicode__()}
     }
     con.update(csrf(request))
@@ -56,20 +68,23 @@ def padCreate(request, pk):
     )
 
 
-@login_required(login_url='/etherpad')
-def padDelete(request, pk):
-    """Delete a given pad
+@login_required
+def padDelete(request, group_slug, pad_slug):
+    """ Delete a given pad
     """
-    pad = get_object_or_404(Pad, pk=pk)
-
+    group = get_object_or_404(PadGroup, slug=group_slug)
+    pad = get_object_or_404(Pad, slug=pad_slug, group=group)
+    pad_group = pad.group
+    if not pad_group.is_moderator(request.user):
+        raise PermissionDenied
     # Any form submissions will send us back to the profile
     if request.method == 'POST':
         if 'confirm' in request.POST:
             pad.delete()
-        return HttpResponseRedirect('/accounts/profile/')
+        return HttpResponseRedirect(reverse('etherpadlite_profile'))
 
     con = {
-        'action': '/etherpad/delete/' + pk + '/',
+        'action': reverse('etherpadlite_delete_pad', kwargs={'group_slug': group_slug, 'pad_slug': pad_slug}),
         'question': _('Really delete this pad?'),
         'title': _('Deleting %(pad)s') % {'pad': pad.__unicode__()}
     }
@@ -81,9 +96,10 @@ def padDelete(request, pk):
     )
 
 
-@login_required(login_url='/etherpad')
+@login_required
 def groupCreate(request):
-    """ Create a new Group
+    """ Create a new Group, a PadGroup and add this group to the creator of the
+    group.
     """
     message = ""
     if request.method == 'POST':  # Process the form
@@ -95,8 +111,9 @@ def groupCreate(request):
             server = PadServer.objects.all()[0]
             pad_group = PadGroup(group=group, server=server)
             pad_group.save()
+            pad_group.moderators.add(request.user)
             request.user.groups.add(group)
-            return HttpResponseRedirect('/accounts/profile/')
+            return HttpResponseRedirect(reverse('etherpadlite_profile'))
         else:
             message = _("This Groupname is allready in use or invalid.")
     else:  # No form to process so create a fresh one
@@ -114,16 +131,104 @@ def groupCreate(request):
     )
 
 
-@login_required(login_url='/etherpad')
-def groupDelete(request, pk):
+@login_required
+def groupDelete(request, slug):
+    """ Delete a given group. This is only possible, if the group hat also a
+    PadGroup
     """
-    """
-    pass
+    pad_group = get_object_or_404(PadGroup, slug=slug)
+    group = pad_group.group
+    if not pad_group.is_moderator(request.user):
+        raise PermissionDenied
+    # Any form submissions will send us back to the profile
+    if request.method == 'POST':
+        if 'confirm' in request.POST:
+            group.delete()
+        return HttpResponseRedirect(reverse('etherpadlite_profile'))
+
+    con = {
+        'action': reverse('etherpadlite_delete_group', kwargs={'slug': slug}),
+        'question': _('Really delete this group?'),
+        'title': _('Deleting %(group)s') % {'group': group.__unicode__()}
+    }
+    con.update(csrf(request))
+    return render_to_response(
+        'etherpad-lite/confirm.html',
+        con,
+        context_instance=RequestContext(request)
+    )
 
 
-@login_required(login_url='/etherpad')
+@login_required
+def groupManage(request, slug):
+    """ Manage a given Group. In this View the user is able to add and remove
+    People from a group
+    """
+    pad_group = get_object_or_404(PadGroup, slug=slug)
+    group = pad_group.group
+    if not pad_group.is_moderator(request.user):
+        raise PermissionDenied
+    # Any form submissions will send us back to the profile
+    con = {
+        'users': group.user_set.all(),
+        'group': group,
+        'moderators': pad_group.moderators.all(),
+        'slug': slug,
+        'messages': []
+    }
+    if request.method == 'POST':
+        if 'userToRemove' in request.POST and 'userToRemove' in request.POST:
+            for username in request.POST.getlist('userToRemove'):
+                user = User.objects.filter(username=username)[0]
+                user.groups.remove(group)
+                con['messages'].append({
+                    'text': _("Removed the following users from group: %s"
+                        % (", ".join(request.POST.getlist('userToRemove')))),
+                    'type': 'success'
+                    }
+                )
+        if 'userToAdd' in request.POST and request.POST.get('userToAdd'):
+            username = request.POST.get('userToAdd')
+            user = User.objects.filter(username=username)
+            if user:
+                user = user[0]
+                user.groups.add(group)
+                con['messages'].append({
+                    'text': _("Added user %s to group." % (user.username)),
+                    'type': 'success'
+                })
+            else:
+                con['messages'].append({
+                    'text': _("No user with username %s." % (username)),
+                    'type': 'error'
+                })
+        if 'isModerator' in request.POST:
+            new_moderator_list = [User.objects.get(username=user)
+                for user in request.POST.getlist('isModerator')]
+            pad_group.moderators = new_moderator_list
+        else:
+            pad_group.moderators.add(request.user)
+            con['messages'].append({
+                'text': _("At least one moderator musst be added. Added " +
+                    "active User."),
+                'type': 'error'
+            })
+        con['moderators'] = pad_group.moderators.all()
+    con.update(csrf(request))
+    pad_group.save()
+    # We have to check again. Its possible that the user removed himself.
+    if not pad_group.is_moderator(request.user):
+        raise PermissionDenied
+    return render_to_response(
+        'etherpad-lite/groupManage.html',
+        con,
+        context_instance=RequestContext(request)
+    )
+
+
+@login_required
 def profile(request):
-    """Display a user profile containing etherpad groups and associated pads
+    """ Display a user profile containing etherpad groups and associated pads
     """
     name = request.user.__unicode__()
 
@@ -141,9 +246,9 @@ def profile(request):
     for g in author.group.all():
         groups[g.__unicode__()] = {
             'group': g,
-            'pads': Pad.objects.filter(group=g)
+            'pads': Pad.objects.filter(group=g),
+            'moderators': g.moderators.all()
         }
-
     return render_to_response(
         'etherpad-lite/profile.html',
         {
@@ -155,13 +260,17 @@ def profile(request):
     )
 
 
-@login_required(login_url='/etherpad')
-def pad(request, pk):
-    """Create and session and display an embedded pad
+@login_required
+def pad(request, group_slug, pad_slug):
+    """ Create and session and display an embedded pad
     """
-
     # Initialize some needed values
-    pad = get_object_or_404(Pad, pk=pk)
+    pad = get_object_or_404(Pad, slug=pad_slug, group__slug=group_slug)
+
+    # It's not a clean way to set modification_date. We shoud refactor this later
+    pad.modification_date = now()
+    pad.save()
+
     padLink = pad.server.url + 'p/' + pad.group.groupID + '$' + \
         urllib.quote_plus(pad.name)
     server = urlparse(pad.server.url)
@@ -222,8 +331,13 @@ def pad(request, pk):
     )
 
     # Delete the existing session first
-    if ('padSessionID' in request.COOKIES):
-        epclient.deleteSession(request.COOKIES['sessionID'])
+    if ('sessionID' in request.COOKIES):
+        try:
+            epclient.deleteSession(request.COOKIES['sessionID'])
+        except ValueError:
+            # Sometimes the deleteSession function creates a sessionID does not
+            # exist Exception during deletion process.
+            pass
         response.delete_cookie('sessionID', server.hostname)
         response.delete_cookie('padSessionID')
 

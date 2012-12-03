@@ -1,0 +1,46 @@
+{% extends "etherpad-lite/base.html" %}
+{% load url from future %}
+{% load i18n %}
+
+{% block title %}{{title}}{% endblock %}
+
+{% block content %}
+  <h1>{% trans "Manage" %} {{ group }}</h1>
+  <form action="{% url 'etherpadlite_manage_group' slug %}" method="post" class="form-horizontal">
+  {% csrf_token %}
+    <table class="table">
+      <caption>{% trans "To remove a user from this Group, select him with the checkbox in the first row and click 'Apply Changes'. To grant them moderator rights, mark him on the checkbox in the last row." %} </caption>
+      <thead>
+        <tr>
+          <td>{% trans "Name" %}</td>
+          <td>{% trans "Moderator" %}</td>
+        </tr>
+      </thead>
+      <tbody>
+      {% for user in users %}
+      <tr>
+        <td>
+          <label class="checkbox">
+            <input type="checkbox" name="userToRemove" value="{{ user.username }}"> {{ user.username }}
+          </label>
+        </td>
+        <td>
+        <label class="modcheckbox">
+          <input type="checkbox" name="isModerator" value="{{ user.username }}"
+            {% if user in moderators %}checked="checked"{% endif %}>
+          </label>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <label>{% trans "Add a User to this Group" %}<label>
+    <p>
+      <input type="text" name="userToAdd" placeholder="{% trans "Username..." %}" />
+    </p>
+    <input class="submit" type="submit" value="{% trans "Apply Changes" %}"/>
+    <a class="submit" href="{% url 'etherpadlite_delete_group' slug %}">
+      {% trans "Delete this group" %}
+    </a>
+  </form>
+{% endblock %}
