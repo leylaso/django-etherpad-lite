@@ -11,4 +11,4 @@ class PadCreate(forms.Form):
 class GroupCreate(forms.ModelForm):
     class Meta:
         model = Group
-        exclude = ('permissions')
+        exclude = ('permissions', 'slug')
