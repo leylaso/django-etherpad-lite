@@ -75,7 +75,7 @@ class PadGroup(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             self.EtherMap()
-            self.slug = _slugify_name(self)
+            self.slug = slugify(self)
         super(PadGroup, self).save(*args, **kwargs)
 
     def Destroy(self):
@@ -190,6 +190,8 @@ class Pad(models.Model):
         return self.epclient.getReadOnlyID(self.padid)
 
     def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
         if not self.id:
             self.Create()
             self.modification_date = now()
