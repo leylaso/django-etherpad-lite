@@ -66,7 +66,8 @@ class PadGroup(models.Model):
         return result
 
     def save(self, *args, **kwargs):
-        self.EtherMap()
+        if not self.id:
+            self.EtherMap()
         super(PadGroup, self).save(*args, **kwargs)
 
     def Destroy(self):
