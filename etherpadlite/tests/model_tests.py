@@ -89,6 +89,22 @@ class PadGroupTestCase(TestCase):
         for char in generated_id_2:
             self.assertTrue(char in chars)
 
+    def test_for_persistend_groupID(self):
+        """ After every save call the id must be the same.
+
+        In the save method of the PadGroup, the EtherMap-function is called.
+        This should be only done once: if self.id it not set, yet. If this
+        would be called every time, the id would change. EtherMap calls the
+        'createGroupIfNotExistsFor' Function on the Etherpad-Lite Server. But
+        the value to check, if the allready exists is generated from the name
+        of the group, the id and a random identifier. The random identifier
+        is the problem here: it generates a new id every time and every pad in
+        the group gets empty.
+        """
+        old_group_id = self.padGroup.groupID
+        self.padGroup.save()
+        self.assertEqual(old_group_id, self.padGroup.groupID)
+
     def test_is_moderator(self):
         self.assertTrue(self.padGroup.is_moderator(self.user_in_group))
         # Test with a user that is not a moderator
