@@ -32,7 +32,6 @@ class EtherpadLiteViewsTests(TestCase):
     def test_profile_view(self):
         """ Tests for the profile view.
         """
-        import pdb;pdb.set_trace()
         response = self.client.get(reverse('etherpadlite_profile'))
         self.assertEqual(response.status_code, 302)
 
