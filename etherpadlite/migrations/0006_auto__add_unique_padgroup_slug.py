@@ -8,23 +8,13 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'PadGroup.slug'
-        db.add_column('etherpadlite_padgroup', 'slug',
-                      self.gf('django.db.models.fields.SlugField')(default=1, max_length=50),
-                      keep_default=False)
-
-        # Adding field 'Pad.slug'
-        db.add_column('etherpadlite_pad', 'slug',
-                      self.gf('django.db.models.fields.SlugField')(default=1, max_length=50),
-                      keep_default=False)
+        # Adding unique constraint on 'PadGroup', fields ['slug']
+        db.create_unique('etherpadlite_padgroup', ['slug'])
 
 
     def backwards(self, orm):
-        # Deleting field 'PadGroup.slug'
-        db.delete_column('etherpadlite_padgroup', 'slug')
-
-        # Deleting field 'Pad.slug'
-        db.delete_column('etherpadlite_pad', 'slug')
+        # Removing unique constraint on 'PadGroup', fields ['slug']
+        db.delete_unique('etherpadlite_padgroup', ['slug'])
 
 
     models = {
@@ -88,7 +78,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'moderators': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.User']", 'symmetrical': 'False', 'blank': 'True'}),
             'server': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['etherpadlite.PadServer']"}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50'})
+            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50'})
         },
         'etherpadlite.padserver': {
             'Meta': {'object_name': 'PadServer'},

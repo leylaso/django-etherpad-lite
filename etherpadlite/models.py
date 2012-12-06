@@ -44,7 +44,7 @@ class PadGroup(models.Model):
     """
     group = models.ForeignKey(Group)
     groupID = models.CharField(max_length=256, blank=True)
-    slug = models.SlugField(unique=True, null=True)
+    slug = models.SlugField(unique=True)
     server = models.ForeignKey(PadServer)
     moderators = models.ManyToManyField(User, blank=True)
 
@@ -160,7 +160,7 @@ class Pad(models.Model):
     """Schema and methods for etherpad-lite pads
     """
     name = models.CharField(max_length=50)
-    slug = models.SlugField(null=True)
+    slug = models.SlugField()
     server = models.ForeignKey(PadServer)
     group = models.ForeignKey(PadGroup)
     modification_date = models.DateTimeField(editable=False, default=now)

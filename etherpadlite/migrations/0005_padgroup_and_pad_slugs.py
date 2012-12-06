@@ -1,31 +1,25 @@
 # -*- coding: utf-8 -*-
 import datetime
 from south.db import db
-from south.v2 import SchemaMigration
+from south.v2 import DataMigration
 from django.db import models
 
+from django.template.defaultfilters import slugify
 
-class Migration(SchemaMigration):
+
+class Migration(DataMigration):
 
     def forwards(self, orm):
-        # Adding field 'PadGroup.slug'
-        db.add_column('etherpadlite_padgroup', 'slug',
-                      self.gf('django.db.models.fields.SlugField')(default=1, max_length=50),
-                      keep_default=False)
+        "Write your forwards methods here."
+        for pad in orm['etherpadlite.Pad'].objects.all():
+            pad.slug = slugify(pad.name)
+        for padGroup in orm['etherpadlite.PadGroup'].objects.all():
+            padGroup.slug = slugify(padGroup.group)
 
-        # Adding field 'Pad.slug'
-        db.add_column('etherpadlite_pad', 'slug',
-                      self.gf('django.db.models.fields.SlugField')(default=1, max_length=50),
-                      keep_default=False)
-
+        # Note: Remember to use orm['appname.ModelName'] rather than "from appname.models..."
 
     def backwards(self, orm):
-        # Deleting field 'PadGroup.slug'
-        db.delete_column('etherpadlite_padgroup', 'slug')
-
-        # Deleting field 'Pad.slug'
-        db.delete_column('etherpadlite_pad', 'slug')
-
+        "Write your backwards methods here."
 
     models = {
         'auth.group': {
@@ -101,3 +95,4 @@ class Migration(SchemaMigration):
     }
 
     complete_apps = ['etherpadlite']
+    symmetrical = True
