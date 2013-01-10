@@ -13,8 +13,10 @@ class Migration(DataMigration):
         "Write your forwards methods here."
         for pad in orm['etherpadlite.Pad'].objects.all():
             pad.slug = slugify(pad.name)
+            pad.save()
         for padGroup in orm['etherpadlite.PadGroup'].objects.all():
-            padGroup.slug = slugify(padGroup.group)
+            padGroup.slug = slugify(padGroup.group.name)
+            padGroup.save()
 
         # Note: Remember to use orm['appname.ModelName'] rather than "from appname.models..."
 
