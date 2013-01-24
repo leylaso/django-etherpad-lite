@@ -272,7 +272,7 @@ def pad(request, group_slug, pad_slug):
     pad.save()
 
     padLink = pad.server.url + 'p/' + pad.group.groupID + '$' + \
-        urllib.quote_plus(pad.name)
+        urllib.quote_plus(pad.name.encode('utf-8'))
     server = urlparse(pad.server.url)
     author = PadAuthor.objects.get(user=request.user)
 
