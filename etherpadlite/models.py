@@ -25,11 +25,21 @@ class PadServer(models.Model):
     apikey = models.CharField(max_length=256, verbose_name=_('API key'))
     notes = models.TextField(_('description'), blank=True)
 
+    created_at = models.DateTimeField(editable=False)
+    updated_at = models.DateTimeField(editable=False)
+
     class Meta:
         verbose_name = _('server')
 
     def __unicode__(self):
         return self.url
+
+    def save(self, *args, **kwargs):
+        self.EtherMap()
+        if not self.id:
+            self.created_at = now()
+        self.updated_at = now()
+        super(PadAuthor, self).save(*args, **kwargs)
 
     @property
     def apiurl(self):
@@ -47,6 +57,9 @@ class PadGroup(models.Model):
     slug = models.SlugField(unique=True)
     server = models.ForeignKey(PadServer)
     moderators = models.ManyToManyField(User, blank=True)
+
+    created_at = models.DateTimeField(editable=False)
+    updated_at = models.DateTimeField(editable=False)
 
     class Meta:
         verbose_name = _('group')
@@ -76,6 +89,8 @@ class PadGroup(models.Model):
         if not self.id:
             self.EtherMap()
             self.slug = slugify(self)
+            self.created_at = now()
+        self.updated_at = now()
         super(PadGroup, self).save(*args, **kwargs)
 
     def Destroy(self):
@@ -126,6 +141,9 @@ class PadAuthor(models.Model):
         related_name='authors'
     )
 
+    created_at = models.DateTimeField(editable=False)
+    updated_at = models.DateTimeField(editable=False)
+
     class Meta:
         verbose_name = _('author')
 
@@ -153,6 +171,9 @@ class PadAuthor(models.Model):
 
     def save(self, *args, **kwargs):
         self.EtherMap()
+        if not self.id:
+            self.created_at = now()
+        self.updated_at = now()
         super(PadAuthor, self).save(*args, **kwargs)
 
 
@@ -164,6 +185,9 @@ class Pad(models.Model):
     server = models.ForeignKey(PadServer)
     group = models.ForeignKey(PadGroup)
     modification_date = models.DateTimeField(editable=False, default=now)
+
+    created_at = models.DateTimeField(editable=False)
+    updated_at = models.DateTimeField(editable=False)
 
     def __unicode__(self):
         return self.name
@@ -194,7 +218,9 @@ class Pad(models.Model):
             self.slug = slugify(self.name)
         if not self.id:
             self.Create()
+            self.created_at = now()
             self.modification_date = now()
+        self.updated_at = now()
         super(Pad, self).save(*args, **kwargs)
 
 
