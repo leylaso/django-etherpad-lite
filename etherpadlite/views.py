@@ -303,6 +303,10 @@ def pad(request, group_slug, pad_slug):
             time.mktime(expires.timetuple()).__str__()
         )
     except Exception, e:
+        if hasattr(e, "reason"):
+            reason = e.reason
+        else:
+            reason = e.message
         response = render_to_response(
             'etherpad-lite/pad.html',
             {
@@ -311,7 +315,7 @@ def pad(request, group_slug, pad_slug):
                 'server': server,
                 'uname': author.user.__unicode__(),
                 'error': _('etherpad-lite session request returned:') +
-                ' "' + e.reason + '"'
+                ' "' + reason + '"'
             },
             context_instance=RequestContext(request)
         )
