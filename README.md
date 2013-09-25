@@ -46,7 +46,7 @@ Etherpad-lite settings generation
 
 __WARNING__: This feature requires dict-style `settings.DATABASES` setting in your project.
 
-`django-etherpad-lite` offers a management command which generates a `settings.json` for Etherpad-lite uses project's database configuration. It is then possible to generate a proper configuration using `python manage.py generate_etherpad_settings > /path/to/etherpad/configuration/settings.json` and then start Etherpad-lite using `-s` option: `node node/server.js -s settings.json`:
+`django-etherpad-lite` offers a management command which generates a `settings.json` for Etherpad-lite, using the project’s database configuration. This makes it easy to share the database between Django and Etherpad-lite (even if this is not strictly required—Django and Etherpad talk to each other through an API). One can generate the configuration using `python manage.py generate_etherpad_settings > /path/to/etherpad/configuration/settings.json` and then start Etherpad-lite using `-s` option: `node node/server.js -s settings.json`:
 
     $ python manage.py generate_etherpad_settings
     {
@@ -74,7 +74,7 @@ This configuration can be overriden by including a `ETHERPAD_CONFIGURATION` sett
         'port': '8088'
     }
 
-One exception is the database setting: while it's possible to override the `dbType` and `dbSettings` settings (e.g. if you prefer to use a real key-value store like Redis), for most use cases it's recommended to set the `databaseAlias` settings (which defaults to `default`) to let `django-etherpad-lite` extract and set database options from your project's settings:
+One exception is the database setting: while it’s possible to override the `dbType` and `dbSettings` settings (e.g. if you prefer to use a real key-value store like Redis), for most use cases it's recommended to set the `databaseAlias` settings (which defaults to `default`) to let `django-etherpad-lite` extract and set database options from your project's settings:
 
     ETHERPAD_CONFIGURATION = {
         'databaseAlias': 'nondefault',
