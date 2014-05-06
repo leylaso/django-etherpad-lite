@@ -1,6 +1,14 @@
+import django
 from django.db import models
 from django.db.models.signals import pre_delete
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
+
+if django.VERSION < (1, 5):
+    from django.contrib.auth.models import User
+else:
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+
 from django.utils.translation import ugettext_lazy as _
 
 from py_etherpad import EtherpadLiteClient
@@ -14,7 +22,6 @@ class PadServer(models.Model):
     title = models.CharField(max_length=256)
     url = models.URLField(
         max_length=256,
-        verify_exists=False,
         verbose_name=_('URL')
     )
     apikey = models.CharField(max_length=256, verbose_name=_('API key'))
