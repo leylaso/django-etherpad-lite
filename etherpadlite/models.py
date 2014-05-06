@@ -22,7 +22,6 @@ class PadServer(models.Model):
     title = models.CharField(max_length=256)
     url = models.URLField(
         max_length=256,
-        verify_exists=False,
         verbose_name=_('URL')
     )
     apikey = models.CharField(max_length=256, verbose_name=_('API key'))
