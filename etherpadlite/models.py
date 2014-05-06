@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.contrib.auth.models import User, Group
+from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
 
 from py_etherpad import EtherpadLiteClient
@@ -100,7 +101,7 @@ pre_delete.connect(groupDel, sender=Group)
 class PadAuthor(models.Model):
     """Schema and methods for etherpad-lite authors
     """
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(get_user_model())
     authorID = models.CharField(max_length=256, blank=True)
     server = models.ForeignKey(PadServer)
     group = models.ManyToManyField(
